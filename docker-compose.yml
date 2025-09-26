@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - user-service
+      - workout-service
+      - progress-service
+    networks:
+      - personal-trainer-network
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - personal-trainer-network
+
+  workout-service:
+    build:
+      context: ./workout-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - personal-trainer-network
+
+  progress-service:
+    build:
+      context: ./progress-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - personal-trainer-network
+
+networks:
+  personal-trainer-network:
+    driver: bridge

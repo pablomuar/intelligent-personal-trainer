@@ -60,7 +60,17 @@ This project follows a microservices architecture with the following components:
    mvn clean compile
    ```
 
-3. **Run services individually**
+3. **Run services using convenience scripts**
+   
+   ```bash
+   # Start all services
+   ./start-services.sh
+   
+   # Stop all services
+   ./stop-services.sh
+   ```
+
+4. **Run services individually (alternative)**
    
    In separate terminal windows:
    

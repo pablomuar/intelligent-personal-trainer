@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.pablomuar</groupId>
+    <groupId>com.intelligent_personal_trainer</groupId>
     <artifactId>intelligent-personal-trainer</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging> <properties>
@@ -15,7 +15,9 @@
 </properties>
 
     <modules>
+        <module>fitness-data-common</module>
         <module>data-processor-service</module>
+        <module>data-persistence-service</module>
     </modules>
 
     <dependencyManagement>
@@ -29,6 +31,15 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>

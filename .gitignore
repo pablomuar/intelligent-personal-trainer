@@ -1,2 +1,4 @@
 /.idea/
-/data-processor-service/target/
+/.run/
+*.iml
+**/target/

@@ -10,16 +10,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class DataPersistenceConsumerService {
-    private final DataPersistenceRepository dataPersistenceRepository;
+    private final FitnessDataPersistenceService fitnessDataPersistenceService;
 
     @Autowired
-    public DataPersistenceConsumerService(DataPersistenceRepository dataPersistenceRepository) {
-        this.dataPersistenceRepository = dataPersistenceRepository;
+    public DataPersistenceConsumerService(FitnessDataPersistenceService fitnessDataPersistenceService) {
+        this.fitnessDataPersistenceService = fitnessDataPersistenceService;
     }
 
     @KafkaListener(topics = KafkaConstants.FITNESS_DATA_TOPIC)
     public void consume(FitnessData data) {
         log.debug("Consuming data of userId \"{}\" from topic {}", data.getUserId(), KafkaConstants.FITNESS_DATA_TOPIC);
-        dataPersistenceRepository.saveData(data);
+        fitnessDataPersistenceService.processAndSave(data);
     }
 }

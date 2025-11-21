@@ -2,11 +2,14 @@ package com.intelligent_personal_trainer.data_processor_service;
 
 import com.intelligent_personal_trainer.common.constants.KafkaConstants;
 import com.intelligent_personal_trainer.common.data.FitnessData;
+import com.intelligent_personal_trainer.common.data.WorkoutData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,12 +31,19 @@ public class DataProducerService implements CommandLineRunner {
         while (true) {
             Thread.sleep(5000);
 
-            FitnessData data = new FitnessData();
-            data.setUserId("user123");
-            data.setAverageHeartRate(75.0);
-            data.setTotalCaloriesBurned(120.0);
-            data.setTotalDistance(80.0);
-            data.setTotalSteps(2000);
+            FitnessData data = FitnessData.builder()
+                    .userId("user123")
+                    .averageHeartRate(75.0)
+                    .totalCaloriesBurned(120.0)
+                    .totalDistance(80.0)
+                    .totalSteps(2000)
+                    .workoutDataList(List.of(WorkoutData.builder()
+                                    .caloriesBurned(120.0)
+                                    .distanceKm(5.0)
+                                    .durationMinutes(30)
+                                    .workoutType("Running")
+                            .build()))
+                    .build();
             sendData(data.getUserId(), data);
         }
     }

@@ -11,18 +11,16 @@ import java.util.List;
 
 @Entity
 @Table(name = "fitness_data")
-@IdClass(FitnessDataId.class)
 @Data
 public class FitnessDataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Id
-    @Column(name = "timestamp", nullable = false)
+    @Column(nullable = false)
     private Instant timestamp;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(nullable = false)
     private String userId;
 
     private double averageHeartRate;

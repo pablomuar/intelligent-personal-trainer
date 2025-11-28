@@ -4,6 +4,8 @@ import com.intelligent_personal_trainer.common.constants.KafkaConstants;
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.time.Instant;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,6 +26,7 @@ public class DataProducerServiceTest {
     void sendData_shouldSendCorrectDataToKafka() {
         String userId = "testUser";
         FitnessData fitnessData = FitnessData.builder()
+                .timestamp(Instant.now())
                 .userId(userId)
                 .averageHeartRate(120.0)
                 .build();

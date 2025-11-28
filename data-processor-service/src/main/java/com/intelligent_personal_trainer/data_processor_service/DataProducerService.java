@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -32,6 +33,7 @@ public class DataProducerService implements CommandLineRunner {
             Thread.sleep(5000);
 
             FitnessData data = FitnessData.builder()
+                    .timestamp(Instant.now())
                     .userId("user123")
                     .averageHeartRate(75.0)
                     .totalCaloriesBurned(120.0)

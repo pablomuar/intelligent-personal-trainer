@@ -3,6 +3,8 @@ package com.intelligent_personal_trainer.data_persistence_service;
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.time.Instant;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,6 +23,7 @@ public class DataPersistenceConsumerServiceTest {
     @Test
     void consume_shouldProcessAndSaveData() {
         FitnessData data = FitnessData.builder()
+                .timestamp(Instant.now())
                 .userId("user123")
                 .build();
 

@@ -31,11 +31,4 @@ public class FitnessDataEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "workout_list", columnDefinition = "jsonb")
     private List<WorkoutData> workoutDataList;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.timestamp == null) {
-            this.timestamp = Instant.now();
-        }
-    }
 }

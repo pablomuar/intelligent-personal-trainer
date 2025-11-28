@@ -11,6 +11,7 @@ public class FitnessDataMapper {
         if (dto == null) return null;
 
         FitnessDataEntity entity = new FitnessDataEntity();
+        entity.setTimestamp(dto.getTimestamp());
         entity.setUserId(dto.getUserId());
         entity.setAverageHeartRate(dto.getAverageHeartRate());
         entity.setTotalSteps(dto.getTotalSteps());
@@ -26,6 +27,7 @@ public class FitnessDataMapper {
             return null;
 
         return FitnessData.builder()
+                .timestamp(entity.getTimestamp())
                 .userId(entity.getUserId())
                 .averageHeartRate(entity.getAverageHeartRate())
                 .totalSteps(entity.getTotalSteps())

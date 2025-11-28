@@ -6,6 +6,7 @@ import com.intelligent_personal_trainer.data_persistence_service.entity.FitnessD
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class FitnessDataMapperTest {
         List<WorkoutData> workoutList = Collections.singletonList(workout);
 
         FitnessData dto = FitnessData.builder()
+                .timestamp(Instant.now())
                 .userId("user123")
                 .averageHeartRate(80.0)
                 .totalSteps(5000)
@@ -43,6 +45,7 @@ public class FitnessDataMapperTest {
         FitnessDataEntity entity = mapper.toEntity(dto);
 
         assertNotNull(entity);
+        assertEquals(dto.getTimestamp(), entity.getTimestamp());
         assertEquals(dto.getUserId(), entity.getUserId());
         assertEquals(dto.getAverageHeartRate(), entity.getAverageHeartRate());
         assertEquals(dto.getTotalSteps(), entity.getTotalSteps());
@@ -68,6 +71,7 @@ public class FitnessDataMapperTest {
         List<WorkoutData> workoutList = Collections.singletonList(workout);
 
         FitnessDataEntity entity = new FitnessDataEntity();
+        entity.setTimestamp(Instant.now());
         entity.setUserId("user456");
         entity.setAverageHeartRate(90.0);
         entity.setTotalSteps(1000);
@@ -78,6 +82,7 @@ public class FitnessDataMapperTest {
         FitnessData dto = mapper.toDto(entity);
 
         assertNotNull(dto);
+        assertEquals(entity.getTimestamp(), dto.getTimestamp());
         assertEquals(entity.getUserId(), dto.getUserId());
         assertEquals(entity.getAverageHeartRate(), dto.getAverageHeartRate());
         assertEquals(entity.getTotalSteps(), dto.getTotalSteps());

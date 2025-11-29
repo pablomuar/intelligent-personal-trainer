@@ -53,7 +53,7 @@ public class GenericCsvReaderService implements FitnessDataReader {
                 // Filter logic: Same userId and same day
                 LocalDateTime recordDateTime = LocalDateTime.parse(csvDateStr, formatter);
                 if (csvUserId.equals(userId) && recordDateTime.toLocalDate().equals(date)) {
-                    FitnessData data = mapRowToEntity(row, config, recordDateTime);
+                    FitnessData data = mapRowToEntity(row, config, recordDateTime, userId);
                     results.add(data);
                 }
             }
@@ -65,9 +65,10 @@ public class GenericCsvReaderService implements FitnessDataReader {
         return results;
     }
 
-    private FitnessData mapRowToEntity(Map<String, String> row, SourceConfig config, LocalDateTime dateTime) {
+    private FitnessData mapRowToEntity(Map<String, String> row, SourceConfig config, LocalDateTime dateTime, String userId) {
         FitnessData.FitnessDataBuilder builder = FitnessData.builder();
         builder.timestamp(dateTime.atZone(ZoneId.of(config.timeZone())).toInstant());
+        builder.userId(userId);
 
         WorkoutData.WorkoutDataBuilder workoutBuilder = WorkoutData.builder();
         boolean hasWorkoutInfo = false;

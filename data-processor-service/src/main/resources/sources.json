@@ -1,0 +1,18 @@
+[
+  {
+    "sourceId": "DATASET_KAGGLE_V1",
+    "filePath": "data/Fitness_Health_Tracking_Dataset.csv",
+    "timeZone": "Europe/Madrid",
+    "dateFormat": "yyyy-MM-dd HH:mm:ss",
+    "mappings": {
+      "userId": "User_ID",
+      "timestamp": "Date",
+      "steps": "Steps_Taken",
+      "caloriesBurned": "Calories_Burned",
+      "heartRate": "Heart_Rate (bpm)",
+      "workoutData.workoutType": "Workout_Type",
+      "workoutData.durationMinutes": "Active_Minutes",
+      "workoutData.intensity": "Stress_Level"
+    }
+  }
+]

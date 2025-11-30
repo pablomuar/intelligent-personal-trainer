@@ -1,4 +1,4 @@
-package com.intelligent_personal_trainer.data_processor_service.data_reader.configuration;
+package com.intelligent_personal_trainer.data_processor_service.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

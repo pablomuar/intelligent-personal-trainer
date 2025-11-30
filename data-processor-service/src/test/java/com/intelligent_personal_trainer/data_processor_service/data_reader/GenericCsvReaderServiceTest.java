@@ -2,7 +2,7 @@ package com.intelligent_personal_trainer.data_processor_service.data_reader;
 
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import com.intelligent_personal_trainer.common.data.WorkoutData;
-import com.intelligent_personal_trainer.data_processor_service.data_reader.configuration.SourceConfig;
+import com.intelligent_personal_trainer.data_processor_service.configuration.SourceConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -16,8 +16,6 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

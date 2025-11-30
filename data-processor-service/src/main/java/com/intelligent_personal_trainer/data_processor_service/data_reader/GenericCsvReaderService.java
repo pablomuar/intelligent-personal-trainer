@@ -2,7 +2,7 @@ package com.intelligent_personal_trainer.data_processor_service.data_reader;
 
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import com.intelligent_personal_trainer.common.data.WorkoutData;
-import com.intelligent_personal_trainer.data_processor_service.data_reader.configuration.SourceConfig;
+import com.intelligent_personal_trainer.data_processor_service.configuration.SourceConfig;
 import com.opencsv.CSVReaderHeaderAware;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +12,9 @@ import org.springframework.util.ReflectionUtils;
 
 import java.io.FileReader;
 import java.lang.reflect.Method;
-import java.time.ZoneId;
-import java.time.ZoneOffset; // Importante para la conversión
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +29,15 @@ public class GenericCsvReaderService implements FitnessDataReader {
     private final Map<String, SourceConfig> sourceConfigs;
 
     @Override
+    public boolean supportsSource(String sourceId) {
+        return sourceConfigs.containsKey(sourceId);
+    }
+
+    @Override
     public List<FitnessData> readData(String sourceId, String userId, LocalDate date) {
         SourceConfig config = sourceConfigs.get(sourceId);
         if (config == null) {
-            throw new IllegalArgumentException("Unknown source: " + sourceId);
+            return new ArrayList<>();
         }
 
         List<FitnessData> results = new ArrayList<>();

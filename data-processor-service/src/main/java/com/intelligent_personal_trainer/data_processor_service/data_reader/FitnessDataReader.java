@@ -8,6 +8,11 @@ import java.util.List;
 public interface FitnessDataReader {
 
     /**
+     * @return true si el lector soporta este sourceId, false en caso contrario
+     */
+    boolean supportsSource(String sourceId);
+
+    /**
      * @param sourceId El ID definido en el JSON
      * @param userId El ID del usuario a filtrar
      * @param date La fecha específica a extraer

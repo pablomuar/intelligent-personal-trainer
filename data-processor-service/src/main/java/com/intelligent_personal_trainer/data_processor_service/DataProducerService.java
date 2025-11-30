@@ -2,51 +2,51 @@ package com.intelligent_personal_trainer.data_processor_service;
 
 import com.intelligent_personal_trainer.common.constants.KafkaConstants;
 import com.intelligent_personal_trainer.common.data.FitnessData;
-import com.intelligent_personal_trainer.common.data.WorkoutData;
+import com.intelligent_personal_trainer.data_processor_service.data_reader.FitnessDataReader;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
 @Service
-public class DataProducerService implements CommandLineRunner {
+@RequiredArgsConstructor
+public class DataProducerService {
+
     private final KafkaTemplate<String, FitnessData> kafkaTemplate;
+    private final List<FitnessDataReader> dataReaderList;
 
-    @Autowired
-    public DataProducerService(KafkaTemplate<String, FitnessData> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+    @Async
+    public void processAndSendData(String sourceId, String userId, LocalDate date) {
+        log.info("Starting ingestion for User: {}, Source: {}, Date: {}", userId, sourceId, date);
 
-    public void sendData(String userId, FitnessData data) {
-        log.debug("Sending userId \"{}\" data to topic {}", userId, KafkaConstants.FITNESS_DATA_TOPIC);
-        kafkaTemplate.send(KafkaConstants.FITNESS_DATA_TOPIC, userId, data);
-    }
+        List<FitnessDataReader> fitnessDataReaders = dataReaderList.stream()
+                .filter(reader -> reader.supportsSource(sourceId))
+                .toList();
 
-    @Override
-    public void run(String... args) throws Exception {
-        while (true) {
-            Thread.sleep(5000);
 
-            FitnessData data = FitnessData.builder()
-                    .timestamp(Instant.now())
-                    .userId("user123")
-                    .averageHeartRate(75.0)
-                    .totalCaloriesBurned(120.0)
-                    .totalDistance(80.0)
-                    .totalSteps(2000)
-                    .workoutDataList(List.of(WorkoutData.builder()
-                                    .caloriesBurned(120.0)
-                                    .distanceKm(5.0)
-                                    .durationMinutes(30)
-                                    .workoutType("Running")
-                            .build()))
-                    .build();
-            sendData(data.getUserId(), data);
+        if (fitnessDataReaders.size() != 1) {
+            log.warn(fitnessDataReaders.isEmpty()
+                    ? "No fitness data reader found for sourceId: {}"
+                    : "Multiple fitness data readers found for sourceId: {}", sourceId);
+            return;
         }
+
+        List<FitnessData> dataList = fitnessDataReaders.getFirst().readData(sourceId, userId, date);
+        if (dataList.isEmpty()) {
+            log.warn("No data found for User: {} on Date: {} from Source: {}", userId, date, sourceId);
+            return;
+        }
+
+        dataList.forEach(data -> {
+            log.debug("Sending data for user {} at timestamp {}", data.getUserId(), data.getTimestamp());
+            kafkaTemplate.send(KafkaConstants.FITNESS_DATA_TOPIC, data.getUserId(), data);
+        });
+
+        log.info("Successfully sent {} records to Kafka.", dataList.size());
     }
 }

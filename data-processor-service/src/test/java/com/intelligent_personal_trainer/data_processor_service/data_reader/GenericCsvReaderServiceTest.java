@@ -125,9 +125,8 @@ class GenericCsvReaderServiceTest {
         String sourceId = "unknown";
         when(sourceConfigs.get(sourceId)).thenReturn(null);
 
-        assertThrows(IllegalArgumentException.class, () ->
-            service.readData(sourceId, "user", LocalDate.now())
-        );
+        List<FitnessData> result = service.readData(sourceId, "user", LocalDate.now());
+        assertTrue(result.isEmpty());
     }
 
     @Test

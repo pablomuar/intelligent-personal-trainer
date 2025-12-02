@@ -1,5 +1,6 @@
 package com.intelligent_personal_trainer.data_processor_service.data_reader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import com.intelligent_personal_trainer.common.data.WorkoutData;
 import com.intelligent_personal_trainer.data_processor_service.configuration.SourceConfig;
@@ -29,13 +30,16 @@ class GenericCsvReaderServiceTest {
     @Mock
     private Map<String, SourceConfig> sourceConfigs;
 
+    @Mock
+    private ObjectMapper objectMapper;
+
     @TempDir
     Path tempDir;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new GenericCsvReaderService(sourceConfigs);
+        service = new GenericCsvReaderService(objectMapper, sourceConfigs);
     }
 
     private File createCsvFile(String fileName, List<String[]> lines) throws IOException {
@@ -88,7 +92,7 @@ class GenericCsvReaderServiceTest {
         assertEquals(1, data.getWorkoutDataList().size());
         WorkoutData workout = data.getWorkoutDataList().get(0);
         assertEquals("Running", workout.getWorkoutType());
-        assertEquals(30, workout.getDurationMinutes());
+        assertEquals("30", workout.getAttributes().get("durationMinutes"));
     }
 
     @Test

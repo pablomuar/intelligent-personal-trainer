@@ -25,9 +25,11 @@ public class FitnessDataMapperTest {
     void toEntity_shouldMapDtoToEntityCorrectly() {
         WorkoutData workout = WorkoutData.builder()
                 .workoutType("Running")
-                .durationMinutes(30)
-                .distanceKm(5.0)
-                .caloriesBurned(300.0)
+                .attributes(java.util.Map.of(
+                        "durationMinutes", "30",
+                        "distanceKm", "5.0",
+                        "caloriesBurned", "300.0"
+                ))
                 .build();
 
         List<WorkoutData> workoutList = Collections.singletonList(workout);
@@ -63,9 +65,11 @@ public class FitnessDataMapperTest {
     void toDto_shouldMapEntityToDtoCorrectly() {
         WorkoutData workout = WorkoutData.builder()
                 .workoutType("Cycling")
-                .durationMinutes(45)
-                .distanceKm(15.0)
-                .caloriesBurned(500.0)
+                .attributes(java.util.Map.of(
+                        "durationMinutes", "45",
+                        "distanceKm", "15.0",
+                        "caloriesBurned", "500.0"
+                ))
                 .build();
 
         List<WorkoutData> workoutList = Collections.singletonList(workout);

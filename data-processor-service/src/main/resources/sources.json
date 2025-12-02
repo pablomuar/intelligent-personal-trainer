@@ -1,18 +1,32 @@
 [
   {
     "sourceId": "DATASET_KAGGLE_V1",
-    "filePath": "data/Fitness_Health_Tracking_Dataset.csv",
+    "filePath": "/data/Fitness_Health_Tracking_Dataset_with_Missing_Values.csv",
     "timeZone": "Europe/Madrid",
     "dateFormat": "yyyy-MM-dd HH:mm:ss",
     "mappings": {
       "userId": "User_ID",
       "timestamp": "Date",
-      "steps": "Steps_Taken",
-      "caloriesBurned": "Calories_Burned",
-      "heartRate": "Heart_Rate (bpm)",
+      "totalSteps": "Steps_Taken",
+      "totalCaloriesBurned": "Calories_Burned",
+      "averageHeartRate": "Heart_Rate (bpm)",
       "workoutData.workoutType": "Workout_Type",
-      "workoutData.durationMinutes": "Active_Minutes",
-      "workoutData.intensity": "Stress_Level"
+      "workoutData.durationMinutes": "Active_Minutes"
+    }
+  },
+  {
+    "sourceId": "PM_DATA",
+    "filePath": "/data/PMData.csv",
+    "timeZone": "Europe/Madrid",
+    "dateFormat": "yyyy-MM-dd",
+    "mappings": {
+      "userId": "participant_id",
+      "timestamp": "date",
+      "totalSteps": "steps",
+      "totalCaloriesBurned": "calories_daily",
+      "totalDistance": "distance",
+      "averageHeartRate": "heart_rate_bpm",
+      "workoutDataList": "workouts_json"
     }
   }
 ]

@@ -24,7 +24,7 @@ public class FitnessDataEntity {
     private String userId;
 
     private double averageHeartRate;
-    private int totalSteps;
+    private double totalSteps;
     private double totalDistance;
     private double totalCaloriesBurned;
 

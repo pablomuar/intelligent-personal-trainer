@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -19,5 +21,12 @@ public class FitnessDataPersistenceService {
     public void processAndSave(FitnessData fitnessData) {
         jpaRepository.save(fitnessDataMapper.toEntity(fitnessData));
         log.debug("Data of user {} saved successfully", fitnessData.getUserId());
+    }
+
+    public List<FitnessData> getFitnessDataByUser(String userId) {
+        return jpaRepository.findByUserIdOrderByTimestampDesc(userId)
+                .stream()
+                .map(fitnessDataMapper::toDto)
+                .toList();
     }
 }

@@ -4,10 +4,13 @@ import com.intelligent_personal_trainer.data_persistence_service.entity.FitnessD
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
 public interface FitnessDataJpaRepository extends JpaRepository<FitnessDataEntity, Long> {
 
     List<FitnessDataEntity> findByUserIdOrderByTimestampDesc(String userId);
+
+    List<FitnessDataEntity> findByUserIdAndTimestampBetweenOrderByTimestampDesc(String userId, Instant start, Instant end);
 }

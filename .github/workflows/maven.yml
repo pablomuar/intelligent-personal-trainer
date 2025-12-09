@@ -11,6 +11,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      timescaledb:
+        image: timescale/timescaledb:latest-pg14
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: fitness_db
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 21
@@ -21,3 +31,7 @@ jobs:
         cache: maven
     - name: Build and Test with Maven
       run: mvn test
+      env:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/fitness_db
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: password

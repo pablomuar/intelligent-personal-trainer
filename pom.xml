@@ -18,6 +18,7 @@
         <module>fitness-data-common</module>
         <module>data-processor-service</module>
         <module>data-persistence-service</module>
+        <module>trainer-service</module>
         <module>user-common</module>
         <module>user-service</module>
     </modules>

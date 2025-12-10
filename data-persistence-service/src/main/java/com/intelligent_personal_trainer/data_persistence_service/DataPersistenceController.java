@@ -26,8 +26,7 @@ public class DataPersistenceController {
             summary = "Retrieve fitness data for a user",
             description = "Returns the historical fitness data. Allows filtering by date range. Provided dates are interpreted in UTC timezone."
     )
-    @ApiResponse(responseCode = "200", description = "Data found")
-    @ApiResponse(responseCode = "204", description = "No data found for the specified user or range")
+    @ApiResponse(responseCode = "200", description = "Data persistence retrieval successful")
     @GetMapping("/fitness-data/{userId}")
     public ResponseEntity<List<FitnessData>> getFitnessData(
             @Parameter(description = "User ID", required = true, example = "user123")
@@ -46,11 +45,6 @@ public class DataPersistenceController {
             LocalDate to
     ) {
         List<FitnessData> data = persistenceService.getFitnessDataByUser(userId, from, to);
-
-        if (data.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         return ResponseEntity.ok(data);
     }
 }

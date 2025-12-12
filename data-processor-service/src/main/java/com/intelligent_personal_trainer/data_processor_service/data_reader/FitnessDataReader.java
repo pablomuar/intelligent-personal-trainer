@@ -14,8 +14,8 @@ public interface FitnessDataReader {
 
     /**
      * @param sourceId El ID definido en el JSON
-     * @param userId El ID del usuario a filtrar
-     * @param externalSourceUserId El ID del usuario en la fuente externa
+     * @param userId El ID del usuario del sistema (se usará para crear el objeto FitnessData)
+     * @param externalSourceUserId El ID del usuario en la fuente externa (se usará para filtrar los datos)
      * @param date La fecha específica a extraer
      * @return Lista de FitnessData para el usuario y la fecha especificados
      */

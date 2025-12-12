@@ -13,6 +13,10 @@ public record DataProcessorRequest(
         @NotBlank(message = "User ID cannot be empty")
         String userId,
 
+        @Schema(description = "User ID in the external source", example = "user123_garmin")
+        @NotBlank(message = "External Source User ID cannot be empty")
+        String externalSourceUserId,
+
         @Schema(description = "ID of the data source configured in sources.json", example = "EXAMPLE_DATASET")
         @NotBlank(message = "Source ID cannot be empty")
         String sourceId,

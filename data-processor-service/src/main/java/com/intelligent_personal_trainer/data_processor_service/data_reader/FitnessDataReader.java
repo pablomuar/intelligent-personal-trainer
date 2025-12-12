@@ -15,8 +15,9 @@ public interface FitnessDataReader {
     /**
      * @param sourceId El ID definido en el JSON
      * @param userId El ID del usuario a filtrar
+     * @param externalSourceUserId El ID del usuario en la fuente externa
      * @param date La fecha específica a extraer
      * @return Lista de FitnessData para el usuario y la fecha especificados
      */
-    List<FitnessData> readData(String sourceId, String userId, LocalDate date);
+    List<FitnessData> readData(String sourceId, String userId, String externalSourceUserId, LocalDate date);
 }

@@ -21,8 +21,8 @@ public class DataProducerService {
     private final List<FitnessDataReader> dataReaderList;
 
     @Async
-    public void processAndSendData(String sourceId, String userId, LocalDate date) {
-        log.info("Starting ingestion for User: {}, Source: {}, Date: {}", userId, sourceId, date);
+    public void processAndSendData(String sourceId, String userId, String externalSourceUserId, LocalDate date) {
+        log.info("Starting ingestion for User: {} (External: {}), Source: {}, Date: {}", userId, externalSourceUserId, sourceId, date);
 
         List<FitnessDataReader> fitnessDataReaders = dataReaderList.stream()
                 .filter(reader -> reader.supportsSource(sourceId))
@@ -36,9 +36,9 @@ public class DataProducerService {
             return;
         }
 
-        List<FitnessData> dataList = fitnessDataReaders.getFirst().readData(sourceId, userId, date);
+        List<FitnessData> dataList = fitnessDataReaders.getFirst().readData(sourceId, userId, externalSourceUserId, date);
         if (dataList.isEmpty()) {
-            log.warn("No data found for User: {} on Date: {} from Source: {}", userId, date, sourceId);
+            log.warn("No data found for User: {} (External: {}) on Date: {} from Source: {}", userId, externalSourceUserId, date, sourceId);
             return;
         }
 

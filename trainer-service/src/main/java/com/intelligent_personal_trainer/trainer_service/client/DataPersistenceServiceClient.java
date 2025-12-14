@@ -15,6 +15,6 @@ public interface DataPersistenceServiceClient {
     List<FitnessData> getFitnessData(
             @PathVariable("userId") String userId,
             @RequestParam("from") String from,
-            @RequestParam("from") String to
+            @RequestParam("to") String to
     );
 }

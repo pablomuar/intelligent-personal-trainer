@@ -31,6 +31,7 @@ public class DataProcessorController {
         dataProducerService.processAndSendData(
                 request.sourceId(),
                 request.userId(),
+                request.externalSourceUserId(),
                 request.date()
         );
 

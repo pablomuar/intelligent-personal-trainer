@@ -30,7 +30,7 @@ class DataProcessorControllerTest {
 
     @Test
     void triggerIngestion_shouldReturnAcceptedAndCallService() throws Exception {
-        DataProcessorRequest request = new DataProcessorRequest("user123", "source456", LocalDate.now().minusDays(1));
+        DataProcessorRequest request = new DataProcessorRequest("user123", "extUser123", "source456", LocalDate.now().minusDays(1));
 
         mockMvc.perform(post("/data-processor/trigger")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -38,12 +38,12 @@ class DataProcessorControllerTest {
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Ingestion triggered for user user123"));
 
-        verify(dataProducerService).processAndSendData("source456", "user123", request.date());
+        verify(dataProducerService).processAndSendData("source456", "user123", "extUser123", request.date());
     }
 
     @Test
     void triggerIngestion_shouldReturnBadRequest_whenDateIsInFuture() throws Exception {
-        DataProcessorRequest request = new DataProcessorRequest("user123", "source456", LocalDate.now().plusDays(1));
+        DataProcessorRequest request = new DataProcessorRequest("user123", "extUser123", "source456", LocalDate.now().plusDays(1));
 
         mockMvc.perform(post("/data-processor/trigger")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +53,17 @@ class DataProcessorControllerTest {
 
     @Test
     void triggerIngestion_shouldReturnBadRequest_whenUserIdIsEmpty() throws Exception {
-        DataProcessorRequest request = new DataProcessorRequest("", "source456", LocalDate.now().minusDays(1));
+        DataProcessorRequest request = new DataProcessorRequest("", "extUser123", "source456", LocalDate.now().minusDays(1));
+
+        mockMvc.perform(post("/data-processor/trigger")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void triggerIngestion_shouldReturnBadRequest_whenExternalSourceUserIdIsEmpty() throws Exception {
+        DataProcessorRequest request = new DataProcessorRequest("user123", "", "source456", LocalDate.now().minusDays(1));
 
         mockMvc.perform(post("/data-processor/trigger")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,7 +73,7 @@ class DataProcessorControllerTest {
 
     @Test
     void triggerIngestion_shouldReturnBadRequest_whenSourceIdIsEmpty() throws Exception {
-        DataProcessorRequest request = new DataProcessorRequest("user123", "", LocalDate.now().minusDays(1));
+        DataProcessorRequest request = new DataProcessorRequest("user123", "extUser123", "", LocalDate.now().minusDays(1));
 
         mockMvc.perform(post("/data-processor/trigger")
                         .contentType(MediaType.APPLICATION_JSON)

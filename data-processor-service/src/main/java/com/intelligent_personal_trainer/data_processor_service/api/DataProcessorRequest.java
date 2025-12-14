@@ -9,11 +9,15 @@ import jakarta.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 public record DataProcessorRequest(
-        @Schema(description = "ID of the user to process", example = "100")
+        @Schema(description = "ID of the user to process")
         @NotBlank(message = "User ID cannot be empty")
         String userId,
 
-        @Schema(description = "ID of the data source configured in sources.json", example = "EXAMPLE_DATASET")
+        @Schema(description = "User ID in the external source")
+        @NotBlank(message = "External Source User ID cannot be empty")
+        String externalSourceUserId,
+
+        @Schema(description = "ID of the data source configured in sources.json")
         @NotBlank(message = "Source ID cannot be empty")
         String sourceId,
 

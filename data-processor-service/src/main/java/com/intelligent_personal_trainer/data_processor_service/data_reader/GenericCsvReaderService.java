@@ -35,7 +35,7 @@ public class GenericCsvReaderService implements FitnessDataReader {
     }
 
     @Override
-    public List<FitnessData> readData(String sourceId, String userId, LocalDate date) {
+    public List<FitnessData> readData(String sourceId, String userId, String externalSourceUserId, LocalDate date) {
         SourceConfig config = sourceConfigs.get(sourceId);
         if (config == null) {
             return new ArrayList<>();
@@ -57,12 +57,12 @@ public class GenericCsvReaderService implements FitnessDataReader {
                 try {
                     LocalDateTime recordDateTime = parseTimestamp(csvDateStr, formatter);
 
-                    if (csvUserId.equals(userId) && recordDateTime.toLocalDate().equals(date)) {
+                    if (csvUserId.equals(externalSourceUserId) && recordDateTime.toLocalDate().equals(date)) {
                         FitnessData data = mapRowToEntity(row, config, recordDateTime, userId);
                         results.add(data);
                     }
                 } catch (Exception e) {
-                    log.warn("Error filtering row for user {} date {}: {}", userId, date, e.getMessage());
+                    log.warn("Error filtering row for user {} (external: {}) date {}: {}", userId, externalSourceUserId, date, e.getMessage());
                 }
             }
 

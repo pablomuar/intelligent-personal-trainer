@@ -36,6 +36,7 @@ class DataProducerServiceTest {
     @Test
     void processAndSendData_shouldSendCorrectDataToKafka() {
         String userId = "testUser";
+        String externalSourceUserId = "extUser";
         String sourceId = "testSource";
         LocalDate date = LocalDate.now();
 
@@ -55,9 +56,9 @@ class DataProducerServiceTest {
         DataProducerService service = new DataProducerService(kafkaTemplate, List.of(fitnessDataReader));
 
         when(fitnessDataReader.supportsSource(sourceId)).thenReturn(true);
-        when(fitnessDataReader.readData(sourceId, userId, date)).thenReturn(List.of(fitnessData));
+        when(fitnessDataReader.readData(sourceId, userId, externalSourceUserId, date)).thenReturn(List.of(fitnessData));
 
-        service.processAndSendData(sourceId, userId, date);
+        service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
         verify(kafkaTemplate).send(KafkaConstants.FITNESS_DATA_TOPIC, userId, fitnessData);
     }
@@ -65,6 +66,7 @@ class DataProducerServiceTest {
     @Test
     void processAndSendData_shouldLogWarning_whenNoReaderFound() {
         String userId = "testUser";
+        String externalSourceUserId = "extUser";
         String sourceId = "testSource";
         LocalDate date = LocalDate.now();
 
@@ -72,15 +74,16 @@ class DataProducerServiceTest {
 
         when(fitnessDataReader.supportsSource(sourceId)).thenReturn(false);
 
-        service.processAndSendData(sourceId, userId, date);
+        service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
         verify(kafkaTemplate, never()).send(any(), any(), any());
-        verify(fitnessDataReader, never()).readData(any(), any(), any());
+        verify(fitnessDataReader, never()).readData(any(), any(), any(), any());
     }
 
     @Test
     void processAndSendData_shouldLogWarning_whenMultipleReadersFound() {
         String userId = "testUser";
+        String externalSourceUserId = "extUser";
         String sourceId = "testSource";
         LocalDate date = LocalDate.now();
 
@@ -90,24 +93,25 @@ class DataProducerServiceTest {
         when(fitnessDataReader.supportsSource(sourceId)).thenReturn(true);
         when(reader2.supportsSource(sourceId)).thenReturn(true);
 
-        service.processAndSendData(sourceId, userId, date);
+        service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
         verify(kafkaTemplate, never()).send(any(), any(), any());
-        verify(fitnessDataReader, never()).readData(any(), any(), any());
+        verify(fitnessDataReader, never()).readData(any(), any(), any(), any());
     }
 
     @Test
     void processAndSendData_shouldLogWarning_whenNoDataFound() {
         String userId = "testUser";
+        String externalSourceUserId = "extUser";
         String sourceId = "testSource";
         LocalDate date = LocalDate.now();
 
         DataProducerService service = new DataProducerService(kafkaTemplate, List.of(fitnessDataReader));
 
         when(fitnessDataReader.supportsSource(sourceId)).thenReturn(true);
-        when(fitnessDataReader.readData(sourceId, userId, date)).thenReturn(Collections.emptyList());
+        when(fitnessDataReader.readData(sourceId, userId, externalSourceUserId, date)).thenReturn(Collections.emptyList());
 
-        service.processAndSendData(sourceId, userId, date);
+        service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
         verify(kafkaTemplate, never()).send(any(), any(), any());
     }

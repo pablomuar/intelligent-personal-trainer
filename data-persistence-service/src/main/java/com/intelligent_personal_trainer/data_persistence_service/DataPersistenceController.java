@@ -45,6 +45,11 @@ public class DataPersistenceController {
             LocalDate to
     ) {
         List<FitnessData> data = persistenceService.getFitnessDataByUser(userId, from, to);
+
+        if (data.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok(data);
     }
 }

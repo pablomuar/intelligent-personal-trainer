@@ -56,13 +56,14 @@ class GenericCsvReaderServiceTest {
     void readData_HappyPath() throws IOException {
         String sourceId = "testSource";
         String userId = "user123";
+        String externalUserId = "ext_user_456"; // Different from userId to verify separation
         LocalDate date = LocalDate.of(2023, 10, 27);
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         String timeZone = "UTC";
 
         File csvFile = createCsvFile("test.csv", List.of(
             new String[]{"user_id", "timestamp_col", "heart_rate", "steps", "workout_type", "duration"},
-            new String[]{userId, "2023-10-27 10:00:00", "120.5", "5000", "Running", "30"}
+            new String[]{externalUserId, "2023-10-27 10:00:00", "120.5", "5000", "Running", "30"}
         ));
 
         Map<String, String> mappings = Map.of(
@@ -77,11 +78,11 @@ class GenericCsvReaderServiceTest {
         SourceConfig config = new SourceConfig(sourceId, timeZone, csvFile.getAbsolutePath(), dateFormat, mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
-        List<FitnessData> result = service.readData(sourceId, userId, date);
+        List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
 
         assertEquals(1, result.size());
         FitnessData data = result.get(0);
-        assertEquals(userId, data.getUserId());
+        assertEquals(userId, data.getUserId(), "FitnessData should contain the system userId");
         assertEquals(120.5, data.getAverageHeartRate());
         assertEquals(5000, data.getTotalSteps());
 
@@ -98,7 +99,8 @@ class GenericCsvReaderServiceTest {
     @Test
     void readData_FilterByUserIdAndDate() throws IOException {
         String sourceId = "testSource";
-        String userId = "targetUser";
+        String userId = "systemUser";
+        String externalUserId = "targetUser";
         LocalDate date = LocalDate.of(2023, 10, 27);
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
@@ -118,10 +120,11 @@ class GenericCsvReaderServiceTest {
         SourceConfig config = new SourceConfig(sourceId, "UTC", csvFile.getAbsolutePath(), dateFormat, mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
-        List<FitnessData> result = service.readData(sourceId, userId, date);
+        List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
 
         assertEquals(1, result.size());
         assertEquals(100, result.get(0).getTotalSteps());
+        assertEquals(userId, result.get(0).getUserId(), "FitnessData should contain the system userId");
     }
 
     @Test
@@ -129,7 +132,7 @@ class GenericCsvReaderServiceTest {
         String sourceId = "unknown";
         when(sourceConfigs.get(sourceId)).thenReturn(null);
 
-        List<FitnessData> result = service.readData(sourceId, "user", LocalDate.now());
+        List<FitnessData> result = service.readData(sourceId, "user", "extUser", LocalDate.now());
         assertTrue(result.isEmpty());
     }
 
@@ -140,7 +143,7 @@ class GenericCsvReaderServiceTest {
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         // Should handle exception internally and return empty list
-        List<FitnessData> result = service.readData(sourceId, "user", LocalDate.now());
+        List<FitnessData> result = service.readData(sourceId, "user", "extUser", LocalDate.now());
 
         assertTrue(result.isEmpty());
     }
@@ -149,6 +152,7 @@ class GenericCsvReaderServiceTest {
     void readData_MissingRequiredColumnsInRow() throws IOException {
         String sourceId = "testSource";
         LocalDate date = LocalDate.of(2023, 10, 27);
+        String externalUserId = "user1";
 
         File csvFile = createCsvFile("test_missing.csv", List.of(
             new String[]{"uid", "ts"},
@@ -165,7 +169,7 @@ class GenericCsvReaderServiceTest {
         SourceConfig config = new SourceConfig(sourceId, "UTC", csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
-        List<FitnessData> result = service.readData(sourceId, "user1", date);
+        List<FitnessData> result = service.readData(sourceId, "sysUser", externalUserId, date);
 
         assertEquals(1, result.size());
     }
@@ -174,11 +178,12 @@ class GenericCsvReaderServiceTest {
     void readData_TypeConversionError() throws IOException {
         String sourceId = "testSource";
         String userId = "user1";
+        String externalUserId = "extUser1";
         LocalDate date = LocalDate.of(2023, 10, 27);
 
         File csvFile = createCsvFile("test_conversion.csv", List.of(
             new String[]{"uid", "ts", "steps"},
-            new String[]{userId, "2023-10-27 10:00:00", "not_a_number"}
+            new String[]{externalUserId, "2023-10-27 10:00:00", "not_a_number"}
         ));
 
         Map<String, String> mappings = Map.of(
@@ -190,7 +195,7 @@ class GenericCsvReaderServiceTest {
         SourceConfig config = new SourceConfig(sourceId, "UTC", csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
-        List<FitnessData> result = service.readData(sourceId, userId, date);
+        List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
 
         assertEquals(1, result.size());
         // primitive int default is 0
@@ -201,11 +206,12 @@ class GenericCsvReaderServiceTest {
     void readData_NoWorkoutData() throws IOException {
         String sourceId = "testSource";
         String userId = "user1";
+        String externalUserId = "extUser1";
         LocalDate date = LocalDate.of(2023, 10, 27);
 
         File csvFile = createCsvFile("test_no_workout.csv", List.of(
             new String[]{"uid", "ts", "steps"},
-            new String[]{userId, "2023-10-27 10:00:00", "1000"}
+            new String[]{externalUserId, "2023-10-27 10:00:00", "1000"}
         ));
 
         Map<String, String> mappings = Map.of(
@@ -217,7 +223,7 @@ class GenericCsvReaderServiceTest {
         SourceConfig config = new SourceConfig(sourceId, "UTC", csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
-        List<FitnessData> result = service.readData(sourceId, userId, date);
+        List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
 
         assertEquals(1, result.size());
         assertNull(result.get(0).getWorkoutDataList());

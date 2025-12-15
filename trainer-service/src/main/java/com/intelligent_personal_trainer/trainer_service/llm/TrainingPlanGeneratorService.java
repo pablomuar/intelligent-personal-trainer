@@ -1,28 +1,28 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
+import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "llm.provider", havingValue = "gemini", matchIfMissing = true)
-public class GeminiLlmService implements LlmService {
+public class TrainingPlanGeneratorService {
 
     private final ChatClient chatClient;
 
-    @Override
-    public String generateContent(String promptText) {
+    public TrainingPlanLlmResponse generateTrainingPlan(String promptText) {
         log.info("Generating content using Spring AI 2.0 (Google GenAI)...");
 
         try {
             return chatClient.prompt()
+                    .system("You are an expert Personal Trainer. " +
+                            "You create a concise training plan based on the user's request, the user's medical conditions and the previous workouts.")
                     .user(promptText)
                     .call()
-                    .content();
+                    .entity(TrainingPlanLlmResponse.class);
 
         } catch (Exception e) {
             log.error("Error calling Gemini API via Spring AI", e);

@@ -8,5 +8,5 @@ import lombok.Data;
 public class TrainingPlanResponse {
     private String userId;
     private String originalPrompt;
-    private String trainingPlanMarkdown; // Respuesta de la IA
+    private String trainingPlan;
 }

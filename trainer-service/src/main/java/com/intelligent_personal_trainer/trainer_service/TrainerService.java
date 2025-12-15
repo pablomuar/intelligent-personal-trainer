@@ -5,13 +5,15 @@ import com.intelligent_personal_trainer.trainer_service.client.DataPersistenceSe
 import com.intelligent_personal_trainer.trainer_service.client.UserServiceClient;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
-import com.intelligent_personal_trainer.trainer_service.llm.LlmService;
+import com.intelligent_personal_trainer.trainer_service.llm.TrainingPlanGeneratorService;
+import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
 import com.intelligent_personal_trainer.user_common.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,7 +25,7 @@ public class TrainerService {
     private final UserServiceClient userServiceClient;
     private final DataPersistenceServiceClient persistenceClient;
 
-    private final LlmService llmService;
+    private final TrainingPlanGeneratorService trainingPlanGeneratorService;
 
     /**
      * Orchestrates the creation of a training plan by fetching data from
@@ -65,14 +67,14 @@ public class TrainerService {
            String prompt = buildLlmPrompt(user, fitnessDataHistory, request.getPrompt());
 
            // 5. Query the configured AI provider (transparent to this service)
-           String planMarkdown = llmService.generateContent(prompt);
+           TrainingPlanLlmResponse trainingPlanResponse = trainingPlanGeneratorService.generateTrainingPlan(prompt);
 
            log.info("Training plan generated successfully for user: {}", userId);
 
            return TrainingPlanResponse.builder()
                    .userId(userId)
                    .originalPrompt(request.getPrompt())
-                   .trainingPlanMarkdown(planMarkdown)
+                   .trainingPlan(trainingPlanResponse.toString())
                    .build();
 
        } else {
@@ -85,9 +87,6 @@ public class TrainerService {
      */
     private String buildLlmPrompt(User user, List<FitnessData> history, String userRequest) {
         StringBuilder sb = new StringBuilder();
-
-        // System role
-        sb.append("You are an expert Personal Trainer and Physiotherapist.\n\n");
 
         // User context
         sb.append("### User Profile\n");
@@ -111,23 +110,37 @@ public class TrainerService {
             sb.append("Found ").append(history.size()).append(" activity records:\n");
             // A brief summary of the data to avoid saturating the context
             // We could compute averages here if the list is very long
-            history.stream().limit(10).forEach(data ->
-                    sb.append(String.format("- Date: %s | Steps: %.0f | Avg HR: %.0f | Calories: %.0f\n",
-                            data.getTimestamp(), data.getTotalSteps(), data.getAverageHeartRate(), data.getTotalCaloriesBurned()))
+
+            history.stream().limit(10).forEach(data -> {
+                        LocalDate recordDate = data.getTimestamp().atZone(ZoneId.systemDefault()).toLocalDate();
+                        long daysDiff = LocalDate.now().toEpochDay() - recordDate.toEpochDay();
+                        String dateLabel;
+                        if (daysDiff == 0) {
+                            dateLabel = "Today";
+                        } else if (daysDiff == 1) {
+                            dateLabel = "Yesterday";
+                        } else {
+                            dateLabel = daysDiff + " days ago";
+                        }
+
+                        sb.append(String.format("- Date: %s | Steps: %.0f | Avg HR: %.0f | Calories: %.0f",
+                                dateLabel, data.getTotalSteps(), data.getAverageHeartRate(), data.getTotalCaloriesBurned()));
+                        if(data.getWorkoutDataList() == null || data.getWorkoutDataList().isEmpty()) {
+                            sb.append("No recorded specific workout records.\n");
+
+                        } else {
+                            sb.append(" | Workouts: ")
+                                    .append(data.getWorkoutDataList());
+                        }
+                        sb.append("\n");
+                    }
             );
         }
         sb.append("\n");
 
         // User specific request
         sb.append("### User Goal/Request\n");
-        sb.append(userRequest).append("\n\n");
-
-        // Formatting instructions
-        sb.append("### Instructions\n");
-        sb.append("1. Create a detailed workout plan based on the profile and request.\n");
-        sb.append("2. Adapt intensity based on recent activity and lifestyle.\n");
-        sb.append("3. STRICTLY respect medical conditions.\n");
-        sb.append("4. Return the output formatted in Markdown.");
+        sb.append(userRequest);
 
         return sb.toString();
     }

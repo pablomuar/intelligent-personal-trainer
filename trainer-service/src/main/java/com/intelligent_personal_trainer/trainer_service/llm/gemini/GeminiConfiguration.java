@@ -1,4 +1,4 @@
-package com.intelligent_personal_trainer.trainer_service.llm;
+package com.intelligent_personal_trainer.trainer_service.llm.gemini;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;

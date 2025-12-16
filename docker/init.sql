@@ -1,4 +1,3 @@
-
 -- FITNESS DATA
 
 CREATE TABLE IF NOT EXISTS fitness_data (
@@ -23,6 +22,9 @@ CREATE TABLE IF NOT EXISTS user_data (
      name VARCHAR(255) NOT NULL,
      surname VARCHAR(255) NOT NULL,
      age INTEGER,
+     height INTEGER,
+     weight INTEGER,
+     gender VARCHAR(50),
      lifestyle VARCHAR(50),
      data_source_id VARCHAR(255),
      external_source_user_id VARCHAR(255)

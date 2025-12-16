@@ -25,6 +25,17 @@ public class User {
     @Min(value = 0, message = "Age must be positive")
     private Integer age;
 
+    @Schema(description = "Height in centimeters")
+    @Min(value = 0, message = "Height must be positive")
+    private Integer height;
+
+    @Schema(description = "Weight in kilograms")
+    @Min(value = 0, message = "Wight must be positive")
+    private Integer weight;
+
+    @NotNull(message = "Gender is required")
+    private  String gender;
+
     @NotNull(message = "Lifestyle is required")
     private Lifestyle lifestyle;
 

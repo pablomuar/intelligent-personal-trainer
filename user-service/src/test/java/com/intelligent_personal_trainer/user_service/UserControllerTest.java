@@ -37,19 +37,24 @@ class UserControllerTest {
         User userInput = User.builder()
                 .name("John")
                 .surname("Doe")
+                .age(30)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Flu"))
                 .build();
-
-        // Correction: Lifestyle.ACTIVE was removed/renamed in my previous step correction for MapperTest.
-        // I should check Lifestyle again. The previous diff showed I replaced ACTIVE with MODERATELY_ACTIVE.
-        // So I should use MODERATELY_ACTIVE here to be safe and consistent.
-        userInput.setLifestyle(Lifestyle.MODERATELY_ACTIVE);
 
         User createdUser = User.builder()
                 .userId("generated-id")
                 .name("John")
                 .surname("Doe")
+                .age(30)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Flu"))
                 .build();
 
         when(userService.createUser(any(User.class))).thenReturn(createdUser);
@@ -60,7 +65,8 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/users/generated-id"))
                 .andExpect(jsonPath("$.userId").value("generated-id"))
-                .andExpect(jsonPath("$.name").value("John"));
+                .andExpect(jsonPath("$.name").value("John"))
+                .andExpect(jsonPath("$.diseases[0]").value("Flu"));
     }
 
     @Test
@@ -121,14 +127,24 @@ class UserControllerTest {
         User userInput = User.builder()
                 .name("NewName")
                 .surname("Doe")
+                .age(30)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Asthma"))
                 .build();
 
         User updatedUser = User.builder()
                 .userId("user1")
                 .name("NewName")
                 .surname("Doe")
+                .age(30)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Asthma"))
                 .build();
 
         when(userService.updateUser(eq("user1"), any(User.class))).thenReturn(updatedUser);
@@ -137,7 +153,8 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userInput)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("NewName"));
+                .andExpect(jsonPath("$.name").value("NewName"))
+                .andExpect(jsonPath("$.diseases[0]").value("Asthma"));
     }
 
     @Test
@@ -145,6 +162,10 @@ class UserControllerTest {
         User userInput = User.builder()
                 .name("NewName")
                 .surname("Doe")
+                .age(30)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
                 .build();
 

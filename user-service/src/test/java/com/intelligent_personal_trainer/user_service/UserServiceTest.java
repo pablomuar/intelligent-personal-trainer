@@ -1,5 +1,6 @@
 package com.intelligent_personal_trainer.user_service;
 
+import com.intelligent_personal_trainer.user_common.Lifestyle;
 import com.intelligent_personal_trainer.user_common.User;
 import com.intelligent_personal_trainer.user_service.persistence.UserEntity;
 import com.intelligent_personal_trainer.user_service.persistence.UserMapper;
@@ -32,10 +33,24 @@ class UserServiceTest {
 
     @Test
     void createUser_shouldReturnCreatedUser_whenUserDoesNotExist() {
-        User userDto = User.builder().userId("user1").build();
+        User userDto = User.builder()
+                .userId("user1")
+                .name("John")
+                .surname("Doe")
+                .gender("MALE")
+                .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Flu"))
+                .build();
         UserEntity userEntity = new UserEntity();
         UserEntity savedEntity = new UserEntity();
-        User savedDto = User.builder().userId("user1").build();
+        User savedDto = User.builder()
+                .userId("user1")
+                .name("John")
+                .surname("Doe")
+                .gender("MALE")
+                .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Flu"))
+                .build();
 
         when(userRepository.existsById("user1")).thenReturn(false);
         when(userMapper.toEntity(userDto)).thenReturn(userEntity);
@@ -46,6 +61,8 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals("user1", result.getUserId());
+        assertEquals("John", result.getName());
+        assertEquals(List.of("Flu"), result.getDiseases());
         verify(userRepository).save(userEntity);
     }
 
@@ -106,10 +123,24 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldReturnUpdatedUser_whenUserExists() {
-        User userDto = User.builder().userId("user1").name("NewName").build();
+        User userDto = User.builder()
+                .userId("user1")
+                .name("NewName")
+                .surname("Doe")
+                .gender("MALE")
+                .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Asthma"))
+                .build();
         UserEntity existingEntity = new UserEntity();
         UserEntity savedEntity = new UserEntity();
-        User savedDto = User.builder().userId("user1").name("NewName").build();
+        User savedDto = User.builder()
+                .userId("user1")
+                .name("NewName")
+                .surname("Doe")
+                .gender("MALE")
+                .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .diseases(List.of("Asthma"))
+                .build();
 
         when(userRepository.findById("user1")).thenReturn(Optional.of(existingEntity));
         when(userRepository.save(existingEntity)).thenReturn(savedEntity);
@@ -119,6 +150,7 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals("NewName", result.getName());
+        assertEquals(List.of("Asthma"), result.getDiseases());
         verify(userMapper).updateEntityFromDto(existingEntity, userDto);
         verify(userRepository).save(existingEntity);
     }

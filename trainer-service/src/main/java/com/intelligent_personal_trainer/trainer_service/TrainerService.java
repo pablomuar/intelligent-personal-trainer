@@ -22,15 +22,10 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class TrainerService {
 
-    private final UserServiceClient userServiceClient;
-    private final DataPersistenceServiceClient persistenceClient;
-
     private final TrainingPlanGeneratorService trainingPlanGeneratorService;
+    private final DataPersistenceServiceClient persistenceClient;
+    private final UserServiceClient userServiceClient;
 
-    /**
-     * Orchestrates the creation of a training plan by fetching data from
-     * multiple sources in parallel and querying the LLM.
-     */
     public TrainingPlanResponse createPlan(TrainingRequest request) {
         String userId = request.getUserId();
         log.info("Starting training plan generation for user: {}", userId);
@@ -66,8 +61,7 @@ public class TrainerService {
        if (user != null && fitnessDataHistory != null) {
            String prompt = buildLlmPrompt(user, fitnessDataHistory, request.getPrompt());
 
-           // 5. Query the configured AI provider (transparent to this service)
-           TrainingPlanLlmResponse trainingPlanResponse = trainingPlanGeneratorService.generateTrainingPlan(prompt);
+           TrainingPlanLlmResponse trainingPlanResponse = trainingPlanGeneratorService.generateTrainingPlan(prompt, user.getDiseases());
 
            log.info("Training plan generated successfully for user: {}", userId);
 
@@ -82,9 +76,6 @@ public class TrainerService {
        }
     }
 
-    /**
-     * Builds the prompt (Prompt Engineering) by combining profile and data.
-     */
     private String buildLlmPrompt(User user, List<FitnessData> history, String userRequest) {
         StringBuilder sb = new StringBuilder();
 
@@ -94,22 +85,19 @@ public class TrainerService {
         sb.append("- Age: ").append(user.getAge()).append("\n");
         sb.append("- Lifestyle: ").append(user.getLifestyle()).append("\n");
 
+        // Diseases
         if (user.getDiseases() != null && !user.getDiseases().isEmpty()) {
-            sb.append("- Medical Conditions/Injuries: ")
+            sb.append("- Medical Conditions: ")
                     .append(String.join(", ", user.getDiseases()))
                     .append("\n");
             sb.append("WARNING: Pay special attention to these conditions to avoid injury.\n");
         }
         sb.append("\n");
 
-        // Historical context (recent data)
+
         sb.append("### Recent Activity (Last days)\n");
-        if (history == null || history.isEmpty()) {
-            sb.append("No recorded activity in the requested period.\n");
-        } else {
-            sb.append("Found ").append(history.size()).append(" activity records:\n");
-            // A brief summary of the data to avoid saturating the context
-            // We could compute averages here if the list is very long
+        if (history != null && !history.isEmpty()) {
+            sb.append("Recent activity:\n");
 
             history.stream().limit(10).forEach(data -> {
                         LocalDate recordDate = data.getTimestamp().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -135,8 +123,9 @@ public class TrainerService {
                         sb.append("\n");
                     }
             );
+
+            sb.append("\n");
         }
-        sb.append("\n");
 
         // User specific request
         sb.append("### User Goal/Request\n");

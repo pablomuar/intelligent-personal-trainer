@@ -14,6 +14,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@org.springframework.test.context.TestPropertySource(properties = {
+    "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+    "spring.datasource.username=sa",
+    "spring.datasource.password=password",
+    "spring.datasource.driver-class-name=org.h2.Driver"
+})
 class UserRepositoryTest {
 
     @Autowired

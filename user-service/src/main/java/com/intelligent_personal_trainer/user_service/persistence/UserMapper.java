@@ -12,6 +12,8 @@ public class UserMapper {
 
         return UserEntity.builder()
                 .userId(dto.getUserId())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
                 .name(dto.getName())
                 .surname(dto.getSurname())
                 .age(dto.getAge())
@@ -28,6 +30,7 @@ public class UserMapper {
 
         return User.builder()
                 .userId(entity.getUserId())
+                .username(entity.getUsername())
                 .name(entity.getName())
                 .surname(entity.getSurname())
                 .age(entity.getAge())
@@ -41,6 +44,12 @@ public class UserMapper {
     public void updateEntityFromDto(UserEntity entity, User dto) {
         if (dto.getName() != null)
             entity.setName(dto.getName());
+
+        if (dto.getUsername() != null)
+            entity.setUsername(dto.getUsername());
+
+        if (dto.getPassword() != null)
+            entity.setPassword(dto.getPassword());
 
         if (dto.getSurname() != null)
             entity.setSurname(dto.getSurname());

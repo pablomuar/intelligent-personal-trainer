@@ -26,6 +26,8 @@ SELECT create_hypertable('fitness_data', 'timestamp', if_not_exists => TRUE);
 
 CREATE TABLE IF NOT EXISTS user_data (
      user_id VARCHAR(255) PRIMARY KEY,
+     username VARCHAR(255) NOT NULL UNIQUE,
+     password VARCHAR(255) NOT NULL,
      name VARCHAR(255) NOT NULL,
      surname VARCHAR(255) NOT NULL,
      age INTEGER,

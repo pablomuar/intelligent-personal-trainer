@@ -1,6 +1,7 @@
-package com.intelligent_personal_trainer.user_service;
+package com.intelligent_personal_trainer.user_service.api;
 
 import com.intelligent_personal_trainer.user_common.User;
+import com.intelligent_personal_trainer.user_service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -52,6 +53,18 @@ public class UserController {
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "User login")
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            return ResponseEntity.ok(user);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(401).build();
         }
     }
 }

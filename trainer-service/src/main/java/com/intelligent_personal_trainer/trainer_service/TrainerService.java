@@ -72,6 +72,8 @@ public class TrainerService {
                    .build();
 
        } else {
+           log.error("Failed to generate training plan for user: {} due to missing data. Found user: {}. Found fitness data {}",
+                   userId, user != null, fitnessDataHistory != null);
            return null;
        }
     }

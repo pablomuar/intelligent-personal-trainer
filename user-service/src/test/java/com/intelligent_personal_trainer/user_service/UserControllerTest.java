@@ -3,6 +3,7 @@ package com.intelligent_personal_trainer.user_service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.user_common.Lifestyle;
 import com.intelligent_personal_trainer.user_common.User;
+import com.intelligent_personal_trainer.user_service.api.UserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

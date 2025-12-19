@@ -28,6 +28,10 @@ public class UserService {
             throw new IllegalArgumentException("User with ID " + user.getUserId() + " already exists.");
         }
 
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username " + user.getUsername() + " is already taken.");
+        }
+
         UserEntity entity = userMapper.toEntity(user);
         return userMapper.toDto(userRepository.save(entity));
     }
@@ -56,5 +60,14 @@ public class UserService {
 
         userMapper.updateEntityFromDto(entity, user);
         return userMapper.toDto(userRepository.save(entity));
+    }
+
+    @Transactional(readOnly = true)
+    public User login(String username, String password) {
+        log.info("Attempting login for user: {}", username);
+
+        return userRepository.findByUsernameAndPassword(username, password)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
     }
 }

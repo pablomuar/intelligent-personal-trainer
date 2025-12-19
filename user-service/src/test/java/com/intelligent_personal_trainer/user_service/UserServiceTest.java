@@ -35,6 +35,8 @@ class UserServiceTest {
     void createUser_shouldReturnCreatedUser_whenUserDoesNotExist() {
         User userDto = User.builder()
                 .userId("user1")
+                .username("john.doe")
+                .password("password")
                 .name("John")
                 .surname("Doe")
                 .gender("MALE")
@@ -45,6 +47,8 @@ class UserServiceTest {
         UserEntity savedEntity = new UserEntity();
         User savedDto = User.builder()
                 .userId("user1")
+                .username("john.doe")
+                .password("password")
                 .name("John")
                 .surname("Doe")
                 .gender("MALE")
@@ -61,9 +65,51 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals("user1", result.getUserId());
+        assertEquals("john.doe", result.getUsername());
+        assertEquals("password", result.getPassword());
         assertEquals("John", result.getName());
         assertEquals(List.of("Flu"), result.getDiseases());
         verify(userRepository).save(userEntity);
+    }
+
+    @Test
+    void verifyUser_shouldReturnTrue_whenCredentialsAreValid() {
+        String username = "john.doe";
+        String password = "password";
+        UserEntity userEntity = UserEntity.builder()
+                .username(username)
+                .password(password)
+                .build();
+
+        when(userRepository.findByUsernameAndPassword(username, password)).thenReturn(Optional.of(userEntity));
+
+        boolean result = userService.verifyUser(username, password);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void verifyUser_shouldReturnFalse_whenUserNotFound() {
+        String username = "john.doe";
+        String password = "password";
+
+        lenient().when(userRepository.findByUsernameAndPassword(username, password)).thenReturn(Optional.empty());
+
+        boolean result = userService.verifyUser(username, password);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void verifyUser_shouldReturnFalse_whenPasswordIncorrect() {
+        String username = "john.doe";
+        String password = "password";
+
+        lenient().when(userRepository.findByUsernameAndPassword(username, password)).thenReturn(Optional.empty());
+
+        boolean result = userService.verifyUser(username, password);
+
+        assertFalse(result);
     }
 
     @Test
@@ -146,21 +192,23 @@ class UserServiceTest {
         when(userRepository.save(existingEntity)).thenReturn(savedEntity);
         when(userMapper.toDto(savedEntity)).thenReturn(savedDto);
 
-        User result = userService.updateUser("user1", userDto);
+        Optional<User> result = userService.updateUser("user1", userDto);
 
-        assertNotNull(result);
-        assertEquals("NewName", result.getName());
-        assertEquals(List.of("Asthma"), result.getDiseases());
+        assertTrue(result.isPresent());
+        assertEquals("NewName", result.get().getName());
+        assertEquals(List.of("Asthma"), result.get().getDiseases());
         verify(userMapper).updateEntityFromDto(existingEntity, userDto);
         verify(userRepository).save(existingEntity);
     }
 
     @Test
-    void updateUser_shouldThrowException_whenUserDoesNotExist() {
+    void updateUser_shouldReturnEmpty_whenUserDoesNotExist() {
         User userDto = User.builder().userId("user1").build();
         when(userRepository.findById("user1")).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> userService.updateUser("user1", userDto));
+        Optional<User> result = userService.updateUser("user1", userDto);
+
+        assertTrue(result.isEmpty());
         verify(userRepository, never()).save(any());
     }
 }

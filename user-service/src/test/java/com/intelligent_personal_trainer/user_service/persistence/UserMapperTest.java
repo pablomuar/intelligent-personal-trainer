@@ -22,10 +22,14 @@ class UserMapperTest {
     void toEntity_shouldMapAllFields_whenDtoIsValid() {
         User dto = User.builder()
                 .userId("123")
+                .username("john.doe")
+                .password("password")
                 .name("John")
                 .surname("Doe")
                 .age(30)
-                .lifestyle(Lifestyle.MODERATELY_ACTIVE)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
                 .dataSourceId("source1")
                 .externalSourceUserId("ext123")
@@ -36,9 +40,14 @@ class UserMapperTest {
 
         assertNotNull(entity);
         assertEquals(dto.getUserId(), entity.getUserId());
+        assertEquals(dto.getUsername(), entity.getUsername());
+        assertEquals(dto.getPassword(), entity.getPassword());
         assertEquals(dto.getName(), entity.getName());
         assertEquals(dto.getSurname(), entity.getSurname());
         assertEquals(dto.getAge(), entity.getAge());
+        assertEquals(dto.getHeight(), entity.getHeight());
+        assertEquals(dto.getWeight(), entity.getWeight());
+        assertEquals(dto.getGender(), entity.getGender());
         assertEquals(dto.getLifestyle(), entity.getLifestyle());
         assertEquals(dto.getDataSourceId(), entity.getDataSourceId());
         assertEquals(dto.getExternalSourceUserId(), entity.getExternalSourceUserId());
@@ -54,9 +63,14 @@ class UserMapperTest {
     void toDto_shouldMapAllFields_whenEntityIsValid() {
         UserEntity entity = UserEntity.builder()
                 .userId("123")
+                .username("john.doe")
+                .password("password")
                 .name("John")
                 .surname("Doe")
                 .age(30)
+                .height(180)
+                .weight(80)
+                .gender("MALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
                 .dataSourceId("source1")
                 .externalSourceUserId("ext123")
@@ -67,9 +81,14 @@ class UserMapperTest {
 
         assertNotNull(dto);
         assertEquals(entity.getUserId(), dto.getUserId());
+        assertEquals(entity.getUsername(), dto.getUsername());
+        assertNull(dto.getPassword()); // Password should not be mapped to DTO
         assertEquals(entity.getName(), dto.getName());
         assertEquals(entity.getSurname(), dto.getSurname());
         assertEquals(entity.getAge(), dto.getAge());
+        assertEquals(entity.getHeight(), dto.getHeight());
+        assertEquals(entity.getWeight(), dto.getWeight());
+        assertEquals(entity.getGender(), dto.getGender());
         assertEquals(entity.getLifestyle(), dto.getLifestyle());
         assertEquals(entity.getDataSourceId(), dto.getDataSourceId());
         assertEquals(entity.getExternalSourceUserId(), dto.getExternalSourceUserId());
@@ -112,6 +131,9 @@ class UserMapperTest {
                 .name("Name")
                 .surname("Surname")
                 .age(25)
+                .height(175)
+                .weight(75)
+                .gender("FEMALE")
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
                 .dataSourceId("ds")
                 .externalSourceUserId("ext")
@@ -123,6 +145,9 @@ class UserMapperTest {
         assertEquals("Name", entity.getName());
         assertEquals("Surname", entity.getSurname());
         assertEquals(25, entity.getAge());
+        assertEquals(175, entity.getHeight());
+        assertEquals(75, entity.getWeight());
+        assertEquals("FEMALE", entity.getGender());
         assertEquals(Lifestyle.MODERATELY_ACTIVE, entity.getLifestyle());
         assertEquals("ds", entity.getDataSourceId());
         assertEquals("ext", entity.getExternalSourceUserId());

@@ -17,6 +17,9 @@ public class UserMapper {
                 .name(dto.getName())
                 .surname(dto.getSurname())
                 .age(dto.getAge())
+                .height(dto.getHeight())
+                .weight(dto.getWeight())
+                .gender(dto.getGender())
                 .lifestyle(dto.getLifestyle())
                 .dataSourceId(dto.getDataSourceId())
                 .externalSourceUserId(dto.getExternalSourceUserId())
@@ -31,9 +34,13 @@ public class UserMapper {
         return User.builder()
                 .userId(entity.getUserId())
                 .username(entity.getUsername())
+                // password should not be mapped
                 .name(entity.getName())
                 .surname(entity.getSurname())
                 .age(entity.getAge())
+                .height(entity.getHeight())
+                .weight(entity.getWeight())
+                .gender(entity.getGender())
                 .lifestyle(entity.getLifestyle())
                 .dataSourceId(entity.getDataSourceId())
                 .externalSourceUserId(entity.getExternalSourceUserId())
@@ -56,6 +63,15 @@ public class UserMapper {
 
         if (dto.getAge() != null)
             entity.setAge(dto.getAge());
+
+        if (dto.getHeight() != null)
+            entity.setHeight(dto.getHeight());
+
+        if (dto.getWeight() != null)
+            entity.setWeight(dto.getWeight());
+
+        if (dto.getGender() != null)
+            entity.setGender(dto.getGender());
 
         if (dto.getLifestyle() != null)
             entity.setLifestyle(dto.getLifestyle());

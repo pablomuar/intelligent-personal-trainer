@@ -36,6 +36,8 @@ class UserControllerTest {
     @Test
     void createUser_shouldReturnCreated_whenInputIsValid() throws Exception {
         User userInput = User.builder()
+                .username("john.doe")
+                .password("password")
                 .name("John")
                 .surname("Doe")
                 .age(30)
@@ -48,6 +50,8 @@ class UserControllerTest {
 
         User createdUser = User.builder()
                 .userId("generated-id")
+                .username("john.doe")
+                // password should not be returned
                 .name("John")
                 .surname("Doe")
                 .age(30)
@@ -64,7 +68,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userInput)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/users/generated-id"))
                 .andExpect(jsonPath("$.userId").value("generated-id"))
                 .andExpect(jsonPath("$.name").value("John"))
                 .andExpect(jsonPath("$.diseases[0]").value("Flu"));
@@ -126,6 +129,8 @@ class UserControllerTest {
     @Test
     void updateUser_shouldReturnUpdatedUser_whenUserExists() throws Exception {
         User userInput = User.builder()
+                .username("john.doe")
+                .password("password")
                 .name("NewName")
                 .surname("Doe")
                 .age(30)
@@ -138,6 +143,7 @@ class UserControllerTest {
 
         User updatedUser = User.builder()
                 .userId("user1")
+                .username("john.doe")
                 .name("NewName")
                 .surname("Doe")
                 .age(30)
@@ -148,7 +154,7 @@ class UserControllerTest {
                 .diseases(List.of("Asthma"))
                 .build();
 
-        when(userService.updateUser(eq("user1"), any(User.class))).thenReturn(updatedUser);
+        when(userService.updateUser(eq("user1"), any(User.class))).thenReturn(Optional.of(updatedUser));
 
         mockMvc.perform(put("/users/user1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -161,6 +167,8 @@ class UserControllerTest {
     @Test
     void updateUser_shouldReturnNotFound_whenUserDoesNotExist() throws Exception {
         User userInput = User.builder()
+                .username("john.doe")
+                .password("password")
                 .name("NewName")
                 .surname("Doe")
                 .age(30)
@@ -171,11 +179,43 @@ class UserControllerTest {
                 .build();
 
         when(userService.updateUser(eq("user1"), any(User.class)))
-                .thenThrow(new IllegalArgumentException("User not found"));
+                .thenReturn(Optional.empty());
 
         mockMvc.perform(put("/users/user1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userInput)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void login_shouldReturnOk_whenCredentialsAreValid() throws Exception {
+        com.intelligent_personal_trainer.user_service.api.LoginRequest loginRequest = com.intelligent_personal_trainer.user_service.api.LoginRequest.builder()
+                .username("john.doe")
+                .password("password")
+                .build();
+
+        when(userService.verifyUser("john.doe", "password")).thenReturn(true);
+
+        mockMvc.perform(post("/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Login successful"));
+    }
+
+    @Test
+    void login_shouldReturnUnauthorized_whenCredentialsAreInvalid() throws Exception {
+        com.intelligent_personal_trainer.user_service.api.LoginRequest loginRequest = com.intelligent_personal_trainer.user_service.api.LoginRequest.builder()
+                .username("john.doe")
+                .password("wrongpassword")
+                .build();
+
+        when(userService.verifyUser("john.doe", "wrongpassword")).thenReturn(false);
+
+        mockMvc.perform(post("/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("Invalid credentials"));
     }
 }

@@ -35,6 +35,12 @@ public class UserEntity {
 
     private Integer age;
 
+    private Integer height;
+    private Integer weight;
+
+    @Column(nullable = false)
+    private String gender;
+
     @Enumerated(EnumType.STRING)
     private Lifestyle lifestyle;
 

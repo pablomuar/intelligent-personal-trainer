@@ -48,23 +48,19 @@ public class UserController {
     @Operation(summary = "Update an existing user")
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable String userId, @Valid @RequestBody User user) {
-        try {
-            return ResponseEntity.ok(userService.updateUser(userId, user));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return userService.updateUser(userId, user)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "User login")
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-            return ResponseEntity.ok(user);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(401).build();
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        boolean valid = userService.verifyUser(loginRequest.getUsername(), loginRequest.getPassword());
+        if (valid) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
 }

@@ -31,6 +31,7 @@ public class UserMapper {
         return User.builder()
                 .userId(entity.getUserId())
                 .username(entity.getUsername())
+                // password should not be mapped
                 .name(entity.getName())
                 .surname(entity.getSurname())
                 .age(entity.getAge())

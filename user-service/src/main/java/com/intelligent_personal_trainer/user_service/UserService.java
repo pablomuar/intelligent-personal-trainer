@@ -50,16 +50,16 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(String userId, User user) {
+    public Optional<User> updateUser(String userId, User user) {
         user.setUserId(userId);
 
         log.info("Updating user with ID: {}", userId);
 
-        UserEntity entity = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
-
-        userMapper.updateEntityFromDto(entity, user);
-        return userMapper.toDto(userRepository.save(entity));
+        return userRepository.findById(userId)
+                .map(entity -> {
+                    userMapper.updateEntityFromDto(entity, user);
+                    return userMapper.toDto(userRepository.save(entity));
+                });
     }
 
     @Transactional(readOnly = true)
@@ -69,5 +69,9 @@ public class UserService {
         return userRepository.findByUsernameAndPassword(username, password)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+    }
+
+    public boolean verifyUser(String username, String password) {
+        return userRepository.findByUsernameAndPassword(username, password).isPresent();
     }
 }

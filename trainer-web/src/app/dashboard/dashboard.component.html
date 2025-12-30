@@ -1,0 +1,87 @@
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-surface-light dark:bg-surface-dark border-b border-[#f0f2f4] dark:border-[#2a3441] px-6 py-4">
+  <div class="max-w-5xl mx-auto flex items-center justify-between">
+    <!-- Logo Section -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
+        <span class="material-symbols-outlined text-2xl">fitness_center</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight text-text-main dark:text-white">FitAI Trainer</h1>
+    </div>
+    <!-- Logout Button -->
+    <button (click)="logout()" class="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-text-secondary hover:text-primary hover:bg-primary/5 transition-colors">
+      <span>Logout</span>
+      <span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">logout</span>
+    </button>
+  </div>
+</header>
+
+<!-- Main Content Area -->
+<main class="flex-grow w-full max-w-5xl mx-auto px-4 py-8 md:py-12 flex flex-col gap-10">
+  <!-- Input Section (Hero) -->
+  <section class="w-full">
+    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441] overflow-hidden">
+      <div class="p-6 md:p-10 flex flex-col gap-6">
+        <!-- Heading -->
+        <div class="flex flex-col gap-2">
+          <h2 class="text-2xl md:text-3xl font-bold text-text-main dark:text-white">New Workout Plan</h2>
+          <p class="text-text-secondary text-base">
+            Welcome, {{ user()?.username }}! Tell us your goals to generate your custom routine.
+          </p>
+        </div>
+        <!-- Input Form -->
+        <form [formGroup]="form" (ngSubmit)="generatePlan()">
+          @if (error()) {
+            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+              {{ error() }}
+            </div>
+          }
+          <div class="relative">
+            <textarea formControlName="prompt"
+              class="w-full min-h-[180px] p-5 rounded-xl border-0 bg-background-light dark:bg-background-dark text-text-main dark:text-white placeholder:text-text-secondary/70 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-[#1e2837] transition-all resize-none text-lg leading-relaxed shadow-inner"
+              placeholder="E.g., I have 30 mins, I want to focus on cardio and I have back pain."></textarea>
+            <div class="absolute bottom-4 right-4 text-xs text-text-secondary bg-surface-light/80 dark:bg-surface-dark/80 px-2 py-1 rounded backdrop-blur-sm">
+              AI-Powered
+            </div>
+          </div>
+          <!-- Action Bar -->
+          <div class="flex justify-end items-center pt-4">
+            <button type="submit" [disabled]="form.invalid || loading()"
+              class="ml-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-base font-bold h-12 px-8 rounded-xl shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:bg-primary/50 disabled:cursor-not-allowed">
+              <span class="material-symbols-outlined">auto_awesome</span>
+              <span>{{ loading() ? 'Generating...' : 'Generate Plan' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  @if (plan()) {
+    <section class="w-full flex flex-col gap-6 animate-fade-in">
+      <div class="flex items-center justify-between px-2">
+        <h3 class="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">bolt</span>
+          Your Personal Plan
+        </h3>
+      </div>
+      <!-- Result Card -->
+      <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441] overflow-hidden">
+        <div class="p-6 md:p-8">
+          <markdown [data]="plan()"></markdown>
+        </div>
+      </div>
+    </section>
+  } @else if (loading()) {
+    <div class="border-2 border-dashed border-[#dbdfe6] dark:border-[#2a3441] rounded-2xl h-48 flex flex-col items-center justify-center text-text-secondary gap-2 bg-surface-light/50 dark:bg-surface-dark/50">
+      <span class="material-symbols-outlined text-4xl opacity-50 animate-spin">autorenew</span>
+      <p>Generating your personalized routine...</p>
+    </div>
+  } @else if (!error()){
+    <div class="border-2 border-dashed border-[#dbdfe6] dark:border-[#2a3441] rounded-2xl h-48 flex flex-col items-center justify-center text-text-secondary gap-2 bg-surface-light/50 dark:bg-surface-dark/50">
+      <span class="material-symbols-outlined text-4xl opacity-50">fitness_center</span>
+      <p>Your personalized routine will appear here.</p>
+    </div>
+  }
+</main>

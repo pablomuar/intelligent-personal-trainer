@@ -206,13 +206,21 @@ class UserControllerTest {
                 .password("password")
                 .build();
 
-        when(userService.verifyUser("john.doe", "password")).thenReturn(true);
+        User user = User.builder()
+                .userId("user1")
+                .username("john.doe")
+                .name("John")
+                .build();
+
+        when(userService.login("john.doe", "password")).thenReturn(user);
 
         mockMvc.perform(post("/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Login successful"));
+                .andExpect(jsonPath("$.userId").value("user1"))
+                .andExpect(jsonPath("$.username").value("john.doe"))
+                .andExpect(jsonPath("$.name").value("John"));
     }
 
     @Test
@@ -222,12 +230,12 @@ class UserControllerTest {
                 .password("wrongpassword")
                 .build();
 
-        when(userService.verifyUser("john.doe", "wrongpassword")).thenReturn(false);
+        when(userService.login("john.doe", "wrongpassword")).thenThrow(new IllegalArgumentException("Invalid credentials"));
 
         mockMvc.perform(post("/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Invalid credentials"));
+                .andExpect(jsonPath("$.message").value("Invalid credentials"));
     }
 }

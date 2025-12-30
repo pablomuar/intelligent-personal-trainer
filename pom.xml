@@ -22,6 +22,7 @@
         <module>user-common</module>
         <module>user-service</module>
         <module>trainer-web</module>
+        <module>api-gateway</module>
     </modules>
 
     <dependencyManagement>
@@ -30,6 +31,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2025.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

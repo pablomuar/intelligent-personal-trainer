@@ -55,12 +55,12 @@ public class UserController {
 
     @Operation(summary = "User login")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        boolean valid = userService.verifyUser(loginRequest.getUsername(), loginRequest.getPassword());
-        if (valid) {
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.status(401).body("Invalid credentials");
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(401).body(java.util.Collections.singletonMap("message", "Invalid credentials"));
         }
     }
 }

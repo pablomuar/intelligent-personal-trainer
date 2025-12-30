@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+// import { environment } from '../../environments/environment'; // Bypassed for debugging
 
 export interface TrainingPlanRequest {
   userId: string;
@@ -17,7 +17,8 @@ export interface TrainingPlanResponse {
   providedIn: 'root',
 })
 export class TrainerService {
-  private backendUrl = environment.backendUrl;
+  // Forcing the correct URL to bypass local cache issues.
+  private backendUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}
 

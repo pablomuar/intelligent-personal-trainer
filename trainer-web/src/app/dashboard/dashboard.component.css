@@ -1,0 +1,65 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Styles for markdown content */
+:host ::ng-deep markdown {
+  display: block;
+}
+
+:host ::ng-deep markdown h1,
+:host ::ng-deep markdown h2,
+:host ::ng-deep markdown h3 {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep markdown h1 {
+  font-size: 2em;
+}
+
+:host ::ng-deep markdown h2 {
+  font-size: 1.5em;
+  margin-top: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+:host ::ng-deep markdown h3 {
+  font-size: 1.25em;
+  margin-top: 1.25rem;
+}
+
+:host ::ng-deep markdown p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep markdown ul,
+:host ::ng-deep markdown ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep markdown li {
+  margin-bottom: 0.5rem;
+}
+
+:host ::ng-deep markdown strong {
+  font-weight: bold;
+}
+
+:host ::ng-deep markdown em {
+  font-style: italic;
+}

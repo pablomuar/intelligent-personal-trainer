@@ -1,7 +1,12 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {environment} from '../../environments/environment';
+
+export interface WorkoutData {
+  workoutType: string;
+  attributes: { [key: string]: string };
+}
 
 export interface FitnessData {
   id?: string;
@@ -10,6 +15,8 @@ export interface FitnessData {
   totalSteps: number;
   averageHeartRate: number;
   totalCaloriesBurned: number;
+  totalDistance?: number;
+  workoutDataList?: WorkoutData[];
 }
 
 @Injectable({

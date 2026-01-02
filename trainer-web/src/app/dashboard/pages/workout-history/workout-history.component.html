@@ -1,5 +1,4 @@
 <div class="space-y-6 animate-fade-in">
-  <!-- Header & Filters -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <h2 class="text-2xl font-bold text-text-main flex items-center gap-2">
       <span class="material-symbols-outlined text-primary">history</span>
@@ -7,85 +6,85 @@
     </h2>
 
     <div class="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-xl">
-      <button
-        (click)="setRange('24h')"
-        [class.bg-white]="activeRange() === '24h'"
-        [class.dark:bg-gray-700]="activeRange() === '24h'"
-        [class.shadow-sm]="activeRange() === '24h'"
-        [class.text-primary]="activeRange() === '24h'"
-        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-main"
-      >
+      <button (click)="setRange('24h')" [class.bg-white]="activeRange() === '24h'" [class.dark:bg-gray-700]="activeRange() === '24h'" [class.shadow-sm]="activeRange() === '24h'" [class.text-primary]="activeRange() === '24h'" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-main">
         Last 24h
       </button>
-      <button
-        (click)="setRange('7d')"
-        [class.bg-white]="activeRange() === '7d'"
-        [class.dark:bg-gray-700]="activeRange() === '7d'"
-        [class.shadow-sm]="activeRange() === '7d'"
-        [class.text-primary]="activeRange() === '7d'"
-        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-main"
-      >
+      <button (click)="setRange('7d')" [class.bg-white]="activeRange() === '7d'" [class.dark:bg-gray-700]="activeRange() === '7d'" [class.shadow-sm]="activeRange() === '7d'" [class.text-primary]="activeRange() === '7d'" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-main">
         Last 7 Days
       </button>
-      <button
-        (click)="setRange('30d')"
-        [class.bg-white]="activeRange() === '30d'"
-        [class.dark:bg-gray-700]="activeRange() === '30d'"
-        [class.shadow-sm]="activeRange() === '30d'"
-        [class.text-primary]="activeRange() === '30d'"
-        class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-main"
-      >
+      <button (click)="setRange('30d')" [class.bg-white]="activeRange() === '30d'" [class.dark:bg-gray-700]="activeRange() === '30d'" [class.shadow-sm]="activeRange() === '30d'" [class.text-primary]="activeRange() === '30d'" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-main">
         Last Month
       </button>
     </div>
   </div>
 
-  <!-- Loading State -->
   <div *ngIf="loading()" class="py-12 flex justify-center">
     <span class="material-symbols-outlined animate-spin text-4xl text-primary">sync</span>
   </div>
 
-  <!-- Data Table -->
   <div *ngIf="!loading()" class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft overflow-hidden border border-gray-100 dark:border-gray-800">
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm text-text-secondary">
         <thead class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-800">
-          <tr>
-            <th class="px-6 py-4 font-semibold text-text-main">Date</th>
-            <th class="px-6 py-4 font-semibold text-text-main">Steps</th>
-            <th class="px-6 py-4 font-semibold text-text-main">Avg Heart Rate</th>
-            <th class="px-6 py-4 font-semibold text-text-main">Calories</th>
-          </tr>
+        <tr>
+          <th class="px-6 py-4 font-semibold text-text-main">Date</th>
+          <th class="px-6 py-4 font-semibold text-text-main">Steps</th>
+          <th class="px-6 py-4 font-semibold text-text-main">Distance</th>
+          <th class="px-6 py-4 font-semibold text-text-main">Avg Heart Rate</th>
+          <th class="px-6 py-4 font-semibold text-text-main">Calories</th>
+          <th class="px-6 py-4 font-semibold text-text-main">Activities</th>
+        </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-          <tr *ngFor="let item of history()" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-            <td class="px-6 py-4 font-medium text-text-main">
-              {{ item.timestamp | date:'mediumDate' }}
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-lg text-blue-500">directions_walk</span>
-                {{ item.totalSteps | number }}
+        <tr *ngFor="let item of history()" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+          <td class="px-6 py-4 font-medium text-text-main">
+            {{ item.timestamp | date:'mediumDate' }}
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-blue-500">directions_walk</span>
+              {{ item.totalSteps | number }}
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-green-500">straighten</span>
+              {{ item.totalDistance | number:'1.2-2' }} km
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-red-500">favorite</span>
+              {{ item.averageHeartRate | number:'1.0-0' }} bpm
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-orange-500">local_fire_department</span>
+              {{ item.totalCaloriesBurned | number:'1.0-0' }} kcal
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div *ngIf="item.workoutDataList && item.workoutDataList.length > 0; else noWorkout">
+              <div *ngFor="let workout of item.workoutDataList" class="flex flex-col mb-1 last:mb-0">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-medium text-text-main">{{ workout.workoutType }}</span>
+                  <span class="text-xs text-text-secondary">
+                      {{ formatWorkoutAttributes(workout.attributes) }}
+                    </span>
+                </div>
               </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-lg text-red-500">favorite</span>
-                {{ item.averageHeartRate }} bpm
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-lg text-orange-500">local_fire_department</span>
-                {{ item.totalCaloriesBurned }} kcal
-              </div>
-            </td>
-          </tr>
-          <tr *ngIf="history().length === 0" class="bg-gray-50/50">
-            <td colspan="4" class="px-6 py-8 text-center text-text-secondary">
-              No workout data found for this period.
-            </td>
-          </tr>
+            </div>
+            <ng-template #noWorkout>
+              <span class="text-xs text-gray-400 italic">No specific activities</span>
+            </ng-template>
+          </td>
+        </tr>
+        <tr *ngIf="history().length === 0" class="bg-gray-50/50">
+          <td colspan="6" class="px-6 py-8 text-center text-text-secondary">
+            No workout data found for this period.
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>

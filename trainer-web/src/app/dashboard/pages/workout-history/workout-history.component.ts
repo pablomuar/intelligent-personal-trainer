@@ -49,19 +49,29 @@ export default class WorkoutHistoryComponent implements OnInit {
       });
   }
 
+  formatWorkoutAttributes(attributes: { [key: string]: string }): string {
+    if (!attributes) return '';
+    const parts = [];
+
+    // Priorizamos duración y calorías si existen en el mapa
+    if (attributes['durationMinutes']) {
+      // Redondeamos los minutos para que quede limpio
+      const mins = Math.round(parseFloat(attributes['durationMinutes']));
+      parts.push(`${mins} min`);
+    }
+    if (attributes['caloriesBurned']) {
+      parts.push(`${attributes['caloriesBurned']} kcal`);
+    }
+
+    return parts.length > 0 ? `(${parts.join(', ')})` : '';
+  }
+
   private calculateDateRange(range: DateRange): { from: string, to: string } {
     const toDate = new Date();
     const fromDate = new Date();
 
     switch (range) {
       case '24h':
-        // For 24h, we might want just today, or literally 24h ago.
-        // Based on "YYYY-MM-DD" requirement, let's assume "today" or "yesterday + today".
-        // Requirement says "Last 24h". Let's use today for simplicity as per common dashboard patterns,
-        // or effectively same day if granularity is daily.
-        // If granularity is daily, 'from' = today is safer for "today's stats".
-        // Let's go with today for 'from' if it means "current status", or yesterday if it means strictly last 24h.
-        // Let's assume 'from' = 1 day ago.
         fromDate.setDate(toDate.getDate() - 1);
         break;
       case '7d':

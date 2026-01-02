@@ -1,15 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../core/auth/auth.service';
-import { TrainerService, TrainingPlanResponse } from '../core/trainer.service';
-import { User } from '../core/auth/user.model';
-import { MarkdownComponent } from 'ngx-markdown';
-import { CommonModule } from '@angular/common';
+import {Component, inject, signal} from '@angular/core';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AuthService} from '../core/auth/auth.service';
+import {TrainerService, TrainingPlanContent} from '../core/trainer.service';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ReactiveFormsModule, MarkdownComponent, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
@@ -19,7 +17,7 @@ export default class DashboardComponent {
   private fb = inject(FormBuilder);
 
   user = this.authService.currentUser;
-  plan = signal<string | null>(null);
+  plan = signal<TrainingPlanContent | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
 
@@ -40,7 +38,7 @@ export default class DashboardComponent {
         })
         .subscribe({
           next: (response) => {
-            this.plan.set(response.plan);
+            this.plan.set(response.trainingPlan);
             this.loading.set(false);
           },
           error: (err) => {
@@ -50,6 +48,14 @@ export default class DashboardComponent {
           },
         });
     }
+  }
+
+  formatIntensity(value: string): string {
+    if (!value) return '';
+    return value
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('-');
   }
 
   logout() {

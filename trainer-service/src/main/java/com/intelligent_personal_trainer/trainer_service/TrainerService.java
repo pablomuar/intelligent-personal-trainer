@@ -68,7 +68,7 @@ public class TrainerService {
            return TrainingPlanResponse.builder()
                    .userId(userId)
                    .originalPrompt(request.getPrompt())
-                   .trainingPlan(trainingPlanResponse.toString())
+                   .trainingPlan(trainingPlanResponse)
                    .build();
 
        } else {

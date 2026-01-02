@@ -6,7 +6,7 @@
       <div class="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
         <span class="material-symbols-outlined text-2xl">fitness_center</span>
       </div>
-      <h1 class="text-xl font-bold tracking-tight text-text-main dark:text-white">FitAI Trainer</h1>
+      <h1 class="text-xl font-bold tracking-tight text-text-main dark:text-white">Intelligent Personal Trainer</h1>
     </div>
     <!-- Logout Button -->
     <button (click)="logout()" class="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-text-secondary hover:text-primary hover:bg-primary/5 transition-colors">
@@ -59,29 +59,75 @@
 
   <!-- Results Section -->
   @if (plan()) {
-    <section class="w-full flex flex-col gap-6 animate-fade-in">
+    <section class="w-full flex flex-col gap-6 animate-fade-in pb-12">
       <div class="flex items-center justify-between px-2">
         <h3 class="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
           <span class="material-symbols-outlined text-primary">bolt</span>
           Your Personal Plan
         </h3>
+        <div class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+             [ngClass]="{
+               'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': plan()?.confidence === 'HIGH',
+               'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': plan()?.confidence === 'MEDIUM',
+               'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': plan()?.confidence === 'LOW'
+             }">
+          Confidence: {{ plan()?.confidence }}
+        </div>
       </div>
-      <!-- Result Card -->
-      <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441] overflow-hidden">
+
+      <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-primary/20 overflow-hidden relative">
+        <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
         <div class="p-6 md:p-8">
-          <markdown [data]="plan()"></markdown>
+          <h4 class="text-sm font-bold text-primary uppercase tracking-wider mb-2">Recommendation</h4>
+          <p class="text-lg text-text-main dark:text-white leading-relaxed">
+            {{ plan()?.recommendation }}
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441] overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+            <tr class="bg-background-light dark:bg-[#1e2837] border-b border-[#eff1f5] dark:border-[#2a3441]">
+              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider w-24">Day</th>
+              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider w-24">Duration</th>
+              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider w-24">Intensity</th>
+              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider">Session Details</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-[#eff1f5] dark:divide-[#2a3441]">
+              @for (session of plan()?.sessions; track session.day) {
+                <tr class="hover:bg-primary/5 transition-colors">
+                  <td class="p-4 font-bold text-text-main dark:text-white whitespace-nowrap">{{ session.day }}</td>
+                  <td class="p-4 text-sm text-text-secondary whitespace-nowrap">
+                    <span class="inline-flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[16px]">schedule</span>
+                      {{ session.duration }} min
+                    </span>
+                  </td>
+                  <td class="p-4">
+                    <span class="inline-flex whitespace-nowrap px-2 py-1 rounded text-xs font-bold shadow-sm"
+                          [ngClass]="{
+                        'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10': session.intensity === 'REST',
+                        'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 ring-1 ring-inset ring-blue-700/10': session.intensity === 'LOW',
+                        'bg-cyan-50 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400 ring-1 ring-inset ring-cyan-700/10': session.intensity === 'LOW_MEDIUM',
+                        'bg-yellow-50 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500 ring-1 ring-inset ring-yellow-600/20': session.intensity === 'MEDIUM',
+                        'bg-orange-50 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 ring-1 ring-inset ring-orange-600/20': session.intensity === 'MEDIUM_HIGH',
+                        'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-600/10': session.intensity === 'HIGH'
+                      }">
+                      {{ formatIntensity(session.intensity) }}
+                    </span>
+                  </td>
+                  <td class="p-4 text-sm text-text-main dark:text-gray-300 leading-relaxed">
+                    {{ session.sessionDescription }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
-  } @else if (loading()) {
-    <div class="border-2 border-dashed border-[#dbdfe6] dark:border-[#2a3441] rounded-2xl h-48 flex flex-col items-center justify-center text-text-secondary gap-2 bg-surface-light/50 dark:bg-surface-dark/50">
-      <span class="material-symbols-outlined text-4xl opacity-50 animate-spin">autorenew</span>
-      <p>Generating your personalized routine...</p>
-    </div>
-  } @else if (!error()){
-    <div class="border-2 border-dashed border-[#dbdfe6] dark:border-[#2a3441] rounded-2xl h-48 flex flex-col items-center justify-center text-text-secondary gap-2 bg-surface-light/50 dark:bg-surface-dark/50">
-      <span class="material-symbols-outlined text-4xl opacity-50">fitness_center</span>
-      <p>Your personalized routine will appear here.</p>
-    </div>
   }
 </main>

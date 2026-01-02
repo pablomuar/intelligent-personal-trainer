@@ -9,13 +9,30 @@ export interface TrainingPlanRequest {
   daysHistory: number;
 }
 
+export interface PlanSession {
+  day: string;
+  duration: string;
+  intensity: string;
+  sessionDescription: string;
+}
+
+export interface TrainingPlanContent {
+  recommendation: string;
+  analysis: string;
+  confidence: string;
+  sessions: PlanSession[];
+}
+
 export interface TrainingPlanResponse {
-  plan: string;
+  userId: string;
+  originalPrompt: string;
+  trainingPlan: TrainingPlanContent; // Ahora es un objeto tipado
 }
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class TrainerService {
   private backendUrl = environment.backendUrl;
 

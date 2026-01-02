@@ -1,5 +1,6 @@
 package com.intelligent_personal_trainer.trainer_service.dto;
 
+import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,5 +9,5 @@ import lombok.Data;
 public class TrainingPlanResponse {
     private String userId;
     private String originalPrompt;
-    private String trainingPlan;
+    private TrainingPlanLlmResponse trainingPlan;
 }

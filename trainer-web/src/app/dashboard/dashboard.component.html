@@ -1,133 +1,64 @@
-<!-- Top Navigation Bar -->
-<header class="sticky top-0 z-50 bg-surface-light dark:bg-surface-dark border-b border-[#f0f2f4] dark:border-[#2a3441] px-6 py-4">
-  <div class="max-w-5xl mx-auto flex items-center justify-between">
-    <!-- Logo Section -->
-    <div class="flex items-center gap-3">
-      <div class="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary">
-        <span class="material-symbols-outlined text-2xl">fitness_center</span>
-      </div>
-      <h1 class="text-xl font-bold tracking-tight text-text-main dark:text-white">Intelligent Personal Trainer</h1>
-    </div>
-    <!-- Logout Button -->
-    <button (click)="logout()" class="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-text-secondary hover:text-primary hover:bg-primary/5 transition-colors">
-      <span>Logout</span>
-      <span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">logout</span>
-    </button>
-  </div>
-</header>
-
-<!-- Main Content Area -->
-<main class="flex-grow w-full max-w-5xl mx-auto px-4 py-8 md:py-12 flex flex-col gap-10">
-  <!-- Input Section (Hero) -->
-  <section class="w-full">
-    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441] overflow-hidden">
-      <div class="p-6 md:p-10 flex flex-col gap-6">
-        <!-- Heading -->
-        <div class="flex flex-col gap-2">
-          <h2 class="text-2xl md:text-3xl font-bold text-text-main dark:text-white">New Workout Plan</h2>
-          <p class="text-text-secondary text-base">
-            Welcome, {{ user()?.username }}! Write your goals to generate your custom routine.
-          </p>
+<div class="min-h-screen">
+  <!-- Header -->
+  <header class="bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-800/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">fitness_center</span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+              AI Trainer
+            </h1>
+          </div>
         </div>
-        <!-- Input Form -->
-        <form [formGroup]="form" (ngSubmit)="generatePlan()">
-          @if (error()) {
-            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-              {{ error() }}
+
+        <div class="flex items-center gap-4">
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800">
+            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary text-sm">person</span>
             </div>
-          }
-          <div class="relative">
-            <textarea formControlName="prompt"
-              class="w-full min-h-[180px] p-5 rounded-xl border-0 bg-background-light dark:bg-background-dark text-text-main dark:text-white placeholder:text-text-secondary/70 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-[#1e2837] transition-all resize-none text-lg leading-relaxed shadow-inner"
-              placeholder="E.g., I have 30 mins, I want to focus on cardio and I have back pain."></textarea>
-            <div class="absolute bottom-4 right-4 text-xs text-text-secondary bg-surface-light/80 dark:bg-surface-dark/80 px-2 py-1 rounded backdrop-blur-sm">
-              AI-Powered
-            </div>
+            <span class="text-sm font-medium text-text-main">
+              {{ user()?.username }}
+            </span>
           </div>
-          <!-- Action Bar -->
-          <div class="flex justify-end items-center pt-4">
-            <button type="submit" [disabled]="form.invalid || loading()"
-              class="ml-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-base font-bold h-12 px-8 rounded-xl shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:bg-primary/50 disabled:cursor-not-allowed">
-              <span class="material-symbols-outlined">auto_awesome</span>
-              <span>{{ loading() ? 'Generating...' : 'Generate Plan' }}</span>
-            </button>
-          </div>
-        </form>
+
+          <button (click)="logout()"
+                  class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 text-gray-500 hover:text-red-600 transition-colors"
+                  title="Sign out">
+            <span class="material-symbols-outlined">logout</span>
+          </button>
+        </div>
       </div>
     </div>
-  </section>
 
-  <!-- Results Section -->
-  @if (plan()) {
-    <section class="w-full flex flex-col gap-6 animate-fade-in pb-12">
-      <div class="flex items-center justify-between px-2">
-        <h3 class="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">bolt</span>
-          Your Personal Plan
-        </h3>
-        <div class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-             [ngClass]="{
-               'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': plan()?.confidence === 'HIGH',
-               'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': plan()?.confidence === 'MEDIUM',
-               'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': plan()?.confidence === 'LOW'
-             }">
-          Confidence: {{ plan()?.confidence }}
-        </div>
-      </div>
+    <!-- Navigation Tabs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-8" aria-label="Tabs">
+        <a routerLink="generate"
+           routerLinkActive="border-primary text-primary"
+           class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-text-secondary hover:text-text-main hover:border-gray-300 transition-colors">
+           Generate Plan
+        </a>
 
-      <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-primary/20 overflow-hidden relative">
-        <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-        <div class="p-6 md:p-8">
-          <h4 class="text-sm font-bold text-primary uppercase tracking-wider mb-2">Recommendation</h4>
-          <p class="text-lg text-text-main dark:text-white leading-relaxed">
-            {{ plan()?.recommendation }}
-          </p>
-        </div>
-      </div>
+        <a routerLink="history"
+           routerLinkActive="border-primary text-primary"
+           class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-text-secondary hover:text-text-main hover:border-gray-300 transition-colors">
+           History
+        </a>
 
-      <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441] overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-            <tr class="bg-background-light dark:bg-[#1e2837] border-b border-[#eff1f5] dark:border-[#2a3441]">
-              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider w-24">Day</th>
-              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider w-24">Duration</th>
-              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider w-24">Intensity</th>
-              <th class="p-4 text-xs font-bold text-text-secondary uppercase tracking-wider">Session Details</th>
-            </tr>
-            </thead>
-            <tbody class="divide-y divide-[#eff1f5] dark:divide-[#2a3441]">
-              @for (session of plan()?.sessions; track session.day) {
-                <tr class="hover:bg-primary/5 transition-colors">
-                  <td class="p-4 font-bold text-text-main dark:text-white whitespace-nowrap">{{ session.day }}</td>
-                  <td class="p-4 text-sm text-text-secondary whitespace-nowrap">
-                    <span class="inline-flex items-center gap-1">
-                      <span class="material-symbols-outlined text-[16px]">schedule</span>
-                      {{ session.duration }} min
-                    </span>
-                  </td>
-                  <td class="p-4">
-                    <span class="inline-flex whitespace-nowrap px-2 py-1 rounded text-xs font-bold shadow-sm"
-                          [ngClass]="{
-                        'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10': session.intensity === 'REST',
-                        'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 ring-1 ring-inset ring-blue-700/10': session.intensity === 'LOW',
-                        'bg-cyan-50 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400 ring-1 ring-inset ring-cyan-700/10': session.intensity === 'LOW_MEDIUM',
-                        'bg-yellow-50 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500 ring-1 ring-inset ring-yellow-600/20': session.intensity === 'MEDIUM',
-                        'bg-orange-50 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 ring-1 ring-inset ring-orange-600/20': session.intensity === 'MEDIUM_HIGH',
-                        'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-600/10': session.intensity === 'HIGH'
-                      }">
-                      {{ formatIntensity(session.intensity) }}
-                    </span>
-                  </td>
-                  <td class="p-4 text-sm text-text-main dark:text-gray-300 leading-relaxed">
-                    {{ session.sessionDescription }}
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  }
-</main>
+        <a routerLink="register"
+           routerLinkActive="border-primary text-primary"
+           class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-text-secondary hover:text-text-main hover:border-gray-300 transition-colors">
+           Log Workout
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <router-outlet></router-outlet>
+  </main>
+</div>

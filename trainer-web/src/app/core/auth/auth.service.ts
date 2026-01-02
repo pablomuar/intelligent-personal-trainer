@@ -3,15 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { User } from './user.model';
-// import { environment } from '../../../environments/environment'; // Bypassed for debugging
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly USER_INFO = 'USER_INFO';
-  // Forcing the correct URL to bypass local cache issues.
-  private backendUrl = 'http://localhost:8080';
+  private backendUrl = environment.backendUrl;
 
   currentUser = signal<User | null>(null);
 

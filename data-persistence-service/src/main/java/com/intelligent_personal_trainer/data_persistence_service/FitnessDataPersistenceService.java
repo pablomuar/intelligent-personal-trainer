@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.data_persistence_service;
 
 import com.intelligent_personal_trainer.common.data.FitnessData;
+import com.intelligent_personal_trainer.data_persistence_service.entity.FitnessDataEntity;
 import com.intelligent_personal_trainer.data_persistence_service.mapper.FitnessDataMapper;
 import com.intelligent_personal_trainer.data_persistence_service.repository.FitnessDataJpaRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,31 @@ public class FitnessDataPersistenceService {
     public void processAndSave(FitnessData fitnessData) {
         jpaRepository.save(fitnessDataMapper.toEntity(fitnessData));
         log.debug("Data of user {} saved successfully", fitnessData.getUserId());
+    }
+
+    @Transactional
+    public void saveOrUpdate(FitnessData fitnessData) {
+        Instant timestamp = fitnessData.getTimestamp();
+        LocalDate date = LocalDate.ofInstant(timestamp, UTC_ZONE);
+
+        Instant startOfDay = date.atStartOfDay(UTC_ZONE).toInstant();
+        Instant endOfDay = date.plusDays(1).atStartOfDay(UTC_ZONE).toInstant().minusNanos(1);
+
+        FitnessDataEntity entityToSave = fitnessDataMapper.toEntity(fitnessData);
+
+        List<FitnessDataEntity> existingList = jpaRepository.findByUserIdAndTimestampBetweenOrderByTimestampDesc(
+                fitnessData.getUserId(), startOfDay, endOfDay);
+        if (!existingList.isEmpty()) {
+            FitnessDataEntity existingEntity = existingList.getFirst();
+            entityToSave.setId(existingEntity.getId());
+
+            log.debug("Overwriting existing data for user {} on date {}", fitnessData.getUserId(), date);
+
+        } else {
+            log.debug("Creating new data for user {} on date {}", fitnessData.getUserId(), date);
+        }
+
+        jpaRepository.save(entityToSave);
     }
 
     public List<FitnessData> getFitnessDataByUser(String userId, LocalDate from, LocalDate to) {

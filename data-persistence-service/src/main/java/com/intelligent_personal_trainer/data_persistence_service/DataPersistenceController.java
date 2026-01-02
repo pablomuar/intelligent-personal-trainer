@@ -52,4 +52,18 @@ public class DataPersistenceController {
 
         return ResponseEntity.ok(data);
     }
+
+    @Operation(
+            summary = "Create or Update fitness data",
+            description = "Creates a new fitness data record. If a record already exists for the user on the same day, it is overwritten."
+    )
+    @ApiResponse(responseCode = "200", description = "Operation successful")
+    @PostMapping("/fitness-data")
+    public ResponseEntity<Void> saveFitnessData(
+            @Parameter(description = "Fitness Data object", required = true)
+            @RequestBody FitnessData fitnessData
+    ) {
+        persistenceService.saveOrUpdate(fitnessData);
+        return ResponseEntity.ok().build();
+    }
 }

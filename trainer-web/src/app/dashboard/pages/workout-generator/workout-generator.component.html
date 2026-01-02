@@ -1,0 +1,120 @@
+<div class="space-y-8 animate-fade-in">
+  <!-- Welcome Section -->
+  <div class="text-center space-y-4 py-8">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-text-main">
+      Ready to transform your
+      <span class="text-primary">lifestyle?</span>
+    </h2>
+    <p class="text-lg text-text-secondary max-w-2xl mx-auto">
+      Generate a personalized workout plan based on your recent activity and goals.
+    </p>
+  </div>
+
+  <!-- Generator Card -->
+  <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft p-6 sm:p-8 border border-gray-100 dark:border-gray-800">
+    <form [formGroup]="form" (ngSubmit)="generatePlan()" class="space-y-6">
+      <div class="space-y-2">
+        <label for="prompt" class="block text-sm font-medium text-text-main">
+          What are your goals for this week?
+        </label>
+        <div class="relative">
+          <textarea
+            id="prompt"
+            formControlName="prompt"
+            rows="3"
+            class="block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-text-main focus:border-primary focus:ring-primary sm:text-sm p-4 resize-none transition-all placeholder:text-gray-400"
+            placeholder="E.g., I want to focus on cardio and lose some weight..."
+          ></textarea>
+          <div class="absolute bottom-3 right-3">
+            <span class="text-xs text-gray-400">AI Powered</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          [disabled]="form.invalid || loading()"
+          class="group relative inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/30 hover:shadow-primary/50"
+        >
+          <span *ngIf="loading()" class="animate-spin material-symbols-outlined text-lg">sync</span>
+          <span *ngIf="!loading()" class="material-symbols-outlined text-lg">autosix_mp</span>
+          {{ loading() ? 'Generating Plan...' : 'Generate New Plan' }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Error State -->
+    <div *ngIf="error()" class="mt-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 flex items-start gap-3">
+      <span class="material-symbols-outlined text-red-600">error</span>
+      <p class="text-sm text-red-600 dark:text-red-400">{{ error() }}</p>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div *ngIf="plan()" class="space-y-6 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <h3 class="text-xl font-bold text-text-main flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">assignment</span>
+        Your Personal Plan
+      </h3>
+      <div class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+           [ngClass]="{
+             'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': plan()?.confidence === 'HIGH',
+             'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': plan()?.confidence === 'MEDIUM',
+             'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': plan()?.confidence === 'LOW'
+           }">
+        Confidence: {{ plan()?.confidence }}
+      </div>
+    </div>
+
+    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-soft overflow-hidden border border-gray-100 dark:border-gray-800">
+      <!-- Plan Header -->
+      <div class="bg-gradient-to-r from-primary/5 to-transparent p-6 border-b border-gray-100 dark:border-gray-800">
+        <h4 class="text-lg font-bold text-primary mb-2">Recommendation</h4>
+        <p class="text-text-main dark:text-gray-300 leading-relaxed">{{ plan()!.recommendation }}</p>
+      </div>
+
+      <!-- Plan Content -->
+      <div class="p-0 overflow-x-auto">
+        <table class="w-full text-left text-sm text-text-secondary">
+          <thead class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-800">
+            <tr>
+              <th class="px-6 py-4 font-semibold text-text-main">Day</th>
+              <th class="px-6 py-4 font-semibold text-text-main">Duration</th>
+              <th class="px-6 py-4 font-semibold text-text-main">Intensity</th>
+              <th class="px-6 py-4 font-semibold text-text-main">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+            <tr *ngFor="let session of plan()!.sessions" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+              <td class="px-6 py-4 font-medium text-text-main whitespace-nowrap">
+                {{ session.day }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">schedule</span>
+                  {{ session.duration }} min
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  [ngClass]="{
+                    'bg-gray-100 text-gray-800': session.intensity === 'REST',
+                    'bg-blue-100 text-blue-800': session.intensity === 'LOW' || session.intensity === 'LOW_MEDIUM',
+                    'bg-yellow-100 text-yellow-800': session.intensity === 'MEDIUM' || session.intensity === 'MEDIUM_HIGH',
+                    'bg-red-100 text-red-800': session.intensity === 'HIGH'
+                  }">
+                  {{ formatIntensity(session.intensity) }}
+                </span>
+              </td>
+              <td class="px-6 py-4 max-w-md">
+                {{ session.sessionDescription }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

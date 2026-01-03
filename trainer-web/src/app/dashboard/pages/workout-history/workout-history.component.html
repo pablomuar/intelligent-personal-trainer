@@ -1,4 +1,4 @@
-<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in relative">
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <h2 class="text-2xl font-bold text-text-main flex items-center gap-2">
       <span class="material-symbols-outlined text-primary">history</span>
@@ -67,17 +67,12 @@
           <td class="px-6 py-4">
             <div *ngIf="item.workoutDataList && item.workoutDataList.length > 0; else noWorkout">
               <div *ngFor="let workout of item.workoutDataList" class="flex flex-col mb-1 last:mb-0">
-                <div class="group relative flex items-baseline gap-2 w-fit cursor-help">
+                <div
+                  class="flex items-baseline gap-2 w-fit cursor-help"
+                  (mouseenter)="showTooltip($event, workout.attributes)"
+                  (mouseleave)="hideTooltip()"
+                >
                   <span class="font-medium text-text-main">{{ workout.workoutType }}</span>
-
-                  <!-- Tooltip -->
-                  <div class="absolute left-0 bottom-full mb-2 hidden w-max min-w-[150px] flex-col gap-1 rounded-lg bg-white p-3 shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 group-hover:flex z-10 animate-fade-in">
-                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Attributes</div>
-                    <div *ngFor="let attr of getAttributesList(workout.attributes)" class="flex justify-between gap-4 text-xs">
-                      <span class="text-text-secondary">{{ attr.key }}:</span>
-                      <span class="font-medium text-text-main">{{ attr.value }}</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -93,6 +88,21 @@
         </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Fixed Tooltip -->
+  <div
+    *ngIf="tooltipData() as data"
+    class="fixed z-50 w-max min-w-[150px] flex-col gap-1 rounded-lg bg-white p-3 shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 flex animate-fade-in pointer-events-none"
+    [style.top.px]="data.y"
+    [style.left.px]="data.x"
+    style="transform: translateX(-100%)"
+  >
+    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Attributes</div>
+    <div *ngFor="let attr of getAttributesList(data.attributes)" class="flex justify-between gap-4 text-xs">
+      <span class="text-text-secondary">{{ attr.key }}:</span>
+      <span class="font-medium text-text-main">{{ attr.value }}</span>
     </div>
   </div>
 </div>

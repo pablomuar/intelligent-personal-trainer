@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FitnessService, FitnessData, WorkoutData } from '../../../core/fitness.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-workout-register',
@@ -10,10 +11,11 @@ import { AuthService } from '../../../core/auth/auth.service';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './workout-register.component.html',
 })
-export default class WorkoutRegisterComponent {
+export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private fitnessService = inject(FitnessService);
   private authService = inject(AuthService);
+  private destroy$ = new Subject<void>();
 
   // Main form for FitnessData
   form = this.fb.group({
@@ -40,6 +42,67 @@ export default class WorkoutRegisterComponent {
 
   // State to hold attributes for the current workout being built
   currentAttributes = signal<{ [key: string]: string }>({});
+
+  // Success message state
+  successMessage = signal<string | null>(null);
+
+  ngOnInit() {
+    this.form.get('timestamp')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(date => {
+        if (date) {
+          this.loadDataForDate(date);
+        }
+      });
+
+    // Load data for initial date
+    const initialDate = this.form.get('timestamp')?.value;
+    if (initialDate) {
+      this.loadDataForDate(initialDate);
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadDataForDate(date: string) {
+    const currentUser = this.authService.currentUser();
+    if (!currentUser) return;
+
+    this.fitnessService.getFitnessHistory(currentUser.userId, date, date).subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          const entry = data[0];
+          this.form.patchValue({
+            averageHeartRate: entry.averageHeartRate,
+            totalSteps: entry.totalSteps,
+            totalDistance: entry.totalDistance,
+            totalCaloriesBurned: entry.totalCaloriesBurned
+          });
+
+          if (entry.workoutDataList) {
+            this.workoutList.set(entry.workoutDataList);
+          } else {
+            this.workoutList.set([]);
+          }
+        } else {
+          // No data found, reset form but keep date
+          this.form.patchValue({
+            averageHeartRate: null,
+            totalSteps: null,
+            totalDistance: null,
+            totalCaloriesBurned: null
+          });
+          this.workoutList.set([]);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching fitness data', err);
+      }
+    });
+  }
 
   addAttribute() {
     if (this.attributeForm.valid) {
@@ -105,12 +168,9 @@ export default class WorkoutRegisterComponent {
 
       this.fitnessService.saveFitnessData(fitnessData).subscribe({
         next: () => {
-          alert('Fitness data saved successfully!');
-          this.form.reset({
-            timestamp: new Date().toISOString().substring(0, 10)
-          });
-          this.workoutList.set([]);
-          this.currentAttributes.set({});
+          this.showSuccessMessage('Fitness data saved successfully!');
+          // We don't reset the form completely anymore, so the user sees what they saved
+          // potentially reflecting the "current state" of that day
         },
         error: (err) => {
           console.error('Error saving fitness data', err);
@@ -118,5 +178,12 @@ export default class WorkoutRegisterComponent {
         }
       });
     }
+  }
+
+  private showSuccessMessage(message: string) {
+    this.successMessage.set(message);
+    setTimeout(() => {
+      this.successMessage.set(null);
+    }, 3000);
   }
 }

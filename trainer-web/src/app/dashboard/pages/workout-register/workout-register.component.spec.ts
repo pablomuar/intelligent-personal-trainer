@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import WorkoutRegisterComponent from './workout-register.component';
-import { FitnessService } from '../../../core/fitness.service';
+import { FitnessService, FitnessData } from '../../../core/fitness.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { of } from 'rxjs';
 
@@ -13,7 +13,7 @@ describe('WorkoutRegisterComponent', () => {
   let authServiceSpy: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
-    const fSpy = jasmine.createSpyObj('FitnessService', ['saveFitnessData']);
+    const fSpy = jasmine.createSpyObj('FitnessService', ['saveFitnessData', 'getFitnessHistory']);
     const aSpy = jasmine.createSpyObj('AuthService', ['currentUser']);
 
     await TestBed.configureTestingModule({
@@ -39,6 +39,9 @@ describe('WorkoutRegisterComponent', () => {
       diseases: []
     });
 
+    // Default mock for getFitnessHistory to return empty list
+    fitnessServiceSpy.getFitnessHistory.and.returnValue(of([]));
+
     fixture = TestBed.createComponent(WorkoutRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -59,7 +62,7 @@ describe('WorkoutRegisterComponent', () => {
     expect(component.workoutList()[0].attributes['Duration']).toBe('30m');
   });
 
-  it('should save fitness data', () => {
+  it('should save fitness data and show success message', fakeAsync(() => {
     component.form.patchValue({
       timestamp: '2023-10-27',
       averageHeartRate: 120,
@@ -76,5 +79,46 @@ describe('WorkoutRegisterComponent', () => {
     const args = fitnessServiceSpy.saveFitnessData.calls.mostRecent().args[0];
     expect(args.userId).toBe('test-user');
     expect(args.averageHeartRate).toBe(120);
+
+    expect(component.successMessage()).toBe('Fitness data saved successfully!');
+
+    tick(3000);
+    expect(component.successMessage()).toBeNull();
+  }));
+
+  it('should load data when timestamp changes', () => {
+    const mockData: FitnessData = {
+      userId: 'test-user',
+      timestamp: '2023-10-27T00:00:00.000Z',
+      averageHeartRate: 150,
+      totalSteps: 8000,
+      totalDistance: 7.5,
+      totalCaloriesBurned: 600,
+      workoutDataList: []
+    };
+
+    fitnessServiceSpy.getFitnessHistory.and.returnValue(of([mockData]));
+
+    // Trigger value change
+    component.form.get('timestamp')?.setValue('2023-10-27');
+
+    expect(fitnessServiceSpy.getFitnessHistory).toHaveBeenCalledWith('test-user', '2023-10-27', '2023-10-27');
+    expect(component.form.get('averageHeartRate')?.value).toBe(150);
+    expect(component.form.get('totalSteps')?.value).toBe(8000);
+  });
+
+  it('should clear form when no data exists for date', () => {
+    // Setup initial state
+    component.form.patchValue({
+      averageHeartRate: 150
+    });
+
+    fitnessServiceSpy.getFitnessHistory.and.returnValue(of([]));
+
+    // Trigger value change
+    component.form.get('timestamp')?.setValue('2023-10-28');
+
+    expect(fitnessServiceSpy.getFitnessHistory).toHaveBeenCalledWith('test-user', '2023-10-28', '2023-10-28');
+    expect(component.form.get('averageHeartRate')?.value).toBeNull();
   });
 });

@@ -33,4 +33,8 @@ export class FitnessService {
 
     return this.http.get<FitnessData[]>(`${this.apiUrl}/${userId}`, { params });
   }
+
+  saveFitnessData(data: FitnessData): Observable<void> {
+    return this.http.post<void>(this.apiUrl, data);
+  }
 }

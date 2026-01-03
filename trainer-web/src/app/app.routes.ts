@@ -7,6 +7,10 @@ export const routes: Routes = [
     loadComponent: () => import('./login/login.component'),
   },
   {
+    path: 'register',
+    loadComponent: () => import('./register/register.component'),
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component'),
     canActivate: [authGuard],

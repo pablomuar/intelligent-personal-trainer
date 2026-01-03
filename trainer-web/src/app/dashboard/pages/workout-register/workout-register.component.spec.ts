@@ -32,10 +32,13 @@ describe('WorkoutRegisterComponent', () => {
     authServiceSpy.currentUser.and.returnValue({
       userId: 'test-user',
       username: 'Test User',
+      name: 'Test',
+      surname: 'User',
       age: 30,
       height: 180,
       weight: 75,
       gender: 'MALE',
+      lifestyle: 'SEDENTARY',
       diseases: []
     });
 

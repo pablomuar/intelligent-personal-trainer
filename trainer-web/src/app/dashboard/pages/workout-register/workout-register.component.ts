@@ -69,7 +69,7 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
 
   loadDataForDate(date: string) {
     const currentUser = this.authService.currentUser();
-    if (!currentUser) return;
+    if (!currentUser || !currentUser.userId) return;
 
     this.fitnessService.getFitnessHistory(currentUser.userId, date, date).subscribe({
       next: (data) => {
@@ -149,7 +149,7 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
   save() {
     if (this.form.valid) {
       const currentUser = this.authService.currentUser();
-      if (!currentUser) {
+      if (!currentUser || !currentUser.userId) {
         alert('User not logged in!');
         return;
       }

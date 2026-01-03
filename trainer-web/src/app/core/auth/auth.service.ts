@@ -30,6 +30,10 @@ export class AuthService {
     );
   }
 
+  register(user: User): Observable<User> {
+    return this.http.post<User>(`${this.backendUrl}/users`, user);
+  }
+
   logout() {
     localStorage.removeItem(this.USER_INFO);
     this.currentUser.set(null);

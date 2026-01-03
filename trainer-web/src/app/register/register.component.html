@@ -1,0 +1,137 @@
+<div class="flex items-center justify-center min-h-screen bg-background-light dark:bg-background-dark py-12 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-2xl space-y-8 bg-surface-light dark:bg-surface-dark p-8 rounded-2xl shadow-soft border border-[#eff1f5] dark:border-[#2a3441]">
+    <div class="text-center">
+      <div class="flex justify-center items-center gap-3 mb-4">
+        <span class="material-symbols-outlined text-4xl text-primary">person_add</span>
+        <h1 class="text-3xl font-bold tracking-tight text-text-main dark:text-white">Create an Account</h1>
+      </div>
+      <p class="text-text-secondary">Join Intelligent Personal Trainer today</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+      @if (error()) {
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Personal Info -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-text-main dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Personal Information</h3>
+
+          <div>
+            <label for="username" class="block text-sm font-medium text-text-secondary mb-1">Username</label>
+            <input id="username" type="text" formControlName="username" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="jdoe">
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-text-secondary mb-1">Password</label>
+            <input id="password" type="password" formControlName="password" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="••••••••">
+          </div>
+
+          <div>
+            <label for="name" class="block text-sm font-medium text-text-secondary mb-1">First Name</label>
+            <input id="name" type="text" formControlName="name" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="John">
+          </div>
+
+          <div>
+            <label for="surname" class="block text-sm font-medium text-text-secondary mb-1">Last Name</label>
+            <input id="surname" type="text" formControlName="surname" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="Doe">
+          </div>
+        </div>
+
+        <!-- Physical Info -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-text-main dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Physical Details</h3>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="age" class="block text-sm font-medium text-text-secondary mb-1">Age</label>
+              <input id="age" type="number" formControlName="age" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="25">
+            </div>
+            <div>
+              <label for="gender" class="block text-sm font-medium text-text-secondary mb-1">Gender</label>
+              <select id="gender" formControlName="gender" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary">
+                <option value="">Select...</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="height" class="block text-sm font-medium text-text-secondary mb-1">Height (cm)</label>
+              <input id="height" type="number" formControlName="height" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="175">
+            </div>
+            <div>
+              <label for="weight" class="block text-sm font-medium text-text-secondary mb-1">Weight (kg)</label>
+              <input id="weight" type="number" formControlName="weight" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="70">
+            </div>
+          </div>
+
+          <div>
+            <label for="lifestyle" class="block text-sm font-medium text-text-secondary mb-1">Lifestyle</label>
+            <select id="lifestyle" formControlName="lifestyle" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary">
+              <option value="">Select...</option>
+              <option value="SEDENTARY">Sedentary</option>
+              <option value="LIGHTLY_ACTIVE">Lightly Active</option>
+              <option value="MODERATELY_ACTIVE">Moderately Active</option>
+              <option value="VERY_ACTIVE">Very Active</option>
+              <option value="EXTREMELY_ACTIVE">Extremely Active</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-medium text-text-main dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Additional Details</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="dataSourceId" class="block text-sm font-medium text-text-secondary mb-1">Data Source ID (Optional)</label>
+                <input id="dataSourceId" type="text" formControlName="dataSourceId" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary">
+            </div>
+            <div>
+                <label for="externalSourceUserId" class="block text-sm font-medium text-text-secondary mb-1">External User ID (Optional)</label>
+                <input id="externalSourceUserId" type="text" formControlName="externalSourceUserId" class="w-full px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary">
+            </div>
+        </div>
+
+        <!-- Diseases -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+             <label class="block text-sm font-medium text-text-secondary">Diseases / Conditions</label>
+             <button type="button" (click)="addDisease()" class="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">add</span> Add
+             </button>
+          </div>
+
+          <div formArrayName="diseases" class="space-y-2">
+            @for (control of diseases.controls; track $index) {
+                <div class="flex gap-2">
+                    <input [formControlName]="$index" type="text" class="flex-1 px-4 py-2 rounded-lg border bg-background-light dark:bg-background-dark text-text-main dark:text-white focus:ring-2 focus:ring-primary" placeholder="Condition name">
+                    <button type="button" (click)="removeDisease($index)" class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 flex flex-col gap-3">
+        <button type="submit" [disabled]="form.invalid"
+          class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-base font-bold h-12 px-8 rounded-xl shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:bg-primary/50 disabled:cursor-not-allowed">
+          <span>Create Account</span>
+        </button>
+        <button type="button" (click)="goBack()" class="w-full text-center text-text-secondary hover:text-primary transition-colors">
+            Already have an account? Sign in
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

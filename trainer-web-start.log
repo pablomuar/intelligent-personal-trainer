@@ -1,0 +1,63 @@
+
+> trainer-web@0.0.0 start
+> ng serve
+
+❯ Building...
+✔ Building...
+Initial chunk files | Names                       | Raw size
+main.js             | main                        |  2.72 kB |
+chunk-72DMQBEX.js   | -                           |  2.59 kB |
+styles.css          | styles                      | 95 bytes |
+
+                    | Initial total               |  5.40 kB
+
+Lazy chunk files    | Names                       | Raw size
+chunk-GFXAK6AU.js   | workout-register-component  | 25.26 kB |
+chunk-MV22EJZI.js   | workout-history-component   | 14.67 kB |
+chunk-ISSAOWSI.js   | workout-generator-component | 14.35 kB |
+chunk-N3F32AYY.js   | dashboard-component         |  6.43 kB |
+chunk-3VMBXUY6.js   | login-component             |  6.17 kB |
+chunk-DJHORKAB.js   | -                           |  1.01 kB |
+
+Application bundle generation complete. [4.800 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://localhost:4200/
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.771 seconds]
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG9: Property 'getAttributesList' does not exist on type 'WorkoutHistoryComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/dashboard/pages/workout-history/workout-history.component.html:76:45:
+[37m      76 │ ...iv *ngFor="let attr of [32mgetAttributesList[37m(workout.attributes)" c...
+         ╵                           [32m~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component WorkoutHistoryComponent.
+
+    src/app/dashboard/pages/workout-history/workout-history.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./workout-history.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                       | Raw size
+main.js             | main                        |  2.72 kB |
+chunk-72DMQBEX.js   | -                           |  2.59 kB |
+styles.css          | styles                      | 95 bytes |
+
+                    | Initial total               |  5.40 kB
+
+Lazy chunk files    | Names                       | Raw size
+chunk-GFXAK6AU.js   | workout-register-component  | 25.26 kB |
+chunk-4EIAZD6T.js   | workout-history-component   | 14.52 kB |
+chunk-ISSAOWSI.js   | workout-generator-component | 14.35 kB |
+chunk-N3F32AYY.js   | dashboard-component         |  6.43 kB |
+chunk-3VMBXUY6.js   | login-component             |  6.17 kB |
+chunk-DJHORKAB.js   | -                           |  1.01 kB |
+
+Application bundle generation complete. [0.283 seconds]
+
+Page reload sent to client(s).

@@ -36,7 +36,7 @@ export default class WorkoutHistoryComponent implements OnInit {
     this.loading.set(true);
     const { from, to } = this.calculateDateRange(range);
 
-    this.fitnessService.getFitnessHistory(this.user()!.userId, from, to)
+    this.fitnessService.getFitnessHistory(this.user()!.userId!, from, to)
       .subscribe({
         next: (data) => {
           this.history.set(data);

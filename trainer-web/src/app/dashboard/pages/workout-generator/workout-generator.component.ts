@@ -31,7 +31,7 @@ export default class WorkoutGeneratorComponent {
       const { prompt } = this.form.getRawValue();
       this.trainerService
         .generatePlan({
-          userId: this.user()!.userId,
+          userId: this.user()!.userId!,
           prompt: prompt!,
           daysHistory: 7,
         })

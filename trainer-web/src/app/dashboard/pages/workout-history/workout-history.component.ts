@@ -5,6 +5,12 @@ import { FitnessService, FitnessData } from '../../../core/fitness.service';
 
 type DateRange = '24h' | '7d' | '30d';
 
+interface TooltipData {
+  attributes: { [key: string]: string };
+  x: number;
+  y: number;
+}
+
 @Component({
   selector: 'app-workout-history',
   standalone: true,
@@ -18,6 +24,8 @@ export default class WorkoutHistoryComponent implements OnInit {
   history = signal<FitnessData[]>([]);
   loading = signal(false);
   activeRange = signal<DateRange>('7d');
+
+  tooltipData = signal<TooltipData | null>(null);
 
   user = this.authService.currentUser;
 
@@ -49,21 +57,36 @@ export default class WorkoutHistoryComponent implements OnInit {
       });
   }
 
-  formatWorkoutAttributes(attributes: { [key: string]: string }): string {
-    if (!attributes) return '';
-    const parts = [];
+  getAttributesList(attributes: { [key: string]: string }): { key: string; value: string }[] {
+    if (!attributes) return [];
+    return Object.entries(attributes).map(([key, value]) => ({
+      key: this.formatKey(key),
+      value: value
+    }));
+  }
 
-    // Priorizamos duración y calorías si existen en el mapa
-    if (attributes['durationMinutes']) {
-      // Redondeamos los minutos para que quede limpio
-      const mins = Math.round(parseFloat(attributes['durationMinutes']));
-      parts.push(`${mins} min`);
-    }
-    if (attributes['caloriesBurned']) {
-      parts.push(`${attributes['caloriesBurned']} kcal`);
-    }
+  showTooltip(event: MouseEvent, attributes: { [key: string]: string }) {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
 
-    return parts.length > 0 ? `(${parts.join(', ')})` : '';
+    // Position fixed tooltip relative to the viewport.
+    // We place it at the bottom-right of the target element.
+    // CSS handles RTL transform if needed, but here we just set top/left.
+    this.tooltipData.set({
+      attributes,
+      x: rect.right,
+      y: rect.bottom + 5 // Small vertical gap
+    });
+  }
+
+  hideTooltip() {
+    this.tooltipData.set(null);
+  }
+
+  private formatKey(key: string): string {
+    // Splits camelCase and capitalizes first letter
+    const result = key.replace(/([A-Z])/g, ' $1');
+    return result.charAt(0).toUpperCase() + result.slice(1);
   }
 
   private calculateDateRange(range: DateRange): { from: string, to: string } {

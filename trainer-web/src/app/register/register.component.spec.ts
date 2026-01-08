@@ -47,7 +47,6 @@ describe('RegisterComponent', () => {
   });
 
   it('should submit form when valid and redirect on success', () => {
-    // Fill form
     component.form.patchValue({
       username: 'test',
       password: 'password',

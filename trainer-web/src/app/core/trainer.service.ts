@@ -26,7 +26,7 @@ export interface TrainingPlanContent {
 export interface TrainingPlanResponse {
   userId: string;
   originalPrompt: string;
-  trainingPlan: TrainingPlanContent; // Ahora es un objeto tipado
+  trainingPlan: TrainingPlanContent;
 }
 
 @Injectable({

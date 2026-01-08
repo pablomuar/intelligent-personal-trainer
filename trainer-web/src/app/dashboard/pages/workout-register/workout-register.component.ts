@@ -17,7 +17,6 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private destroy$ = new Subject<void>();
 
-  // Main form for FitnessData
   form = this.fb.group({
     timestamp: [new Date().toISOString().substring(0, 10), Validators.required],
     averageHeartRate: [null as number | null, [Validators.required, Validators.min(0)]],
@@ -26,24 +25,19 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
     totalCaloriesBurned: [null as number | null, [Validators.required, Validators.min(0)]],
   });
 
-  // Form for adding a new workout type
   workoutForm = this.fb.group({
     workoutType: ['', Validators.required],
   });
 
-  // Form for adding attributes to the current workout
   attributeForm = this.fb.group({
     key: ['', Validators.required],
     value: ['', Validators.required],
   });
 
-  // State to hold the list of workouts being added
   workoutList = signal<WorkoutData[]>([]);
 
-  // State to hold attributes for the current workout being built
   currentAttributes = signal<{ [key: string]: string }>({});
 
-  // Success message state
   successMessage = signal<string | null>(null);
 
   ngOnInit() {
@@ -55,7 +49,6 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Load data for initial date
     const initialDate = this.form.get('timestamp')?.value;
     if (initialDate) {
       this.loadDataForDate(initialDate);
@@ -88,7 +81,6 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
             this.workoutList.set([]);
           }
         } else {
-          // No data found, reset form but keep date
           this.form.patchValue({
             averageHeartRate: null,
             totalSteps: null,
@@ -136,7 +128,6 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
         { workoutType, attributes }
       ]);
 
-      // Reset workout form and attributes
       this.workoutForm.reset();
       this.currentAttributes.set({});
     }
@@ -169,8 +160,6 @@ export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
       this.fitnessService.saveFitnessData(fitnessData).subscribe({
         next: () => {
           this.showSuccessMessage('Fitness data saved successfully!');
-          // We don't reset the form completely anymore, so the user sees what they saved
-          // potentially reflecting the "current state" of that day
         },
         error: (err) => {
           console.error('Error saving fitness data', err);

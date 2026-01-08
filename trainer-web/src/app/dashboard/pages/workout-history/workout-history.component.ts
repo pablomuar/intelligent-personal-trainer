@@ -69,13 +69,10 @@ export default class WorkoutHistoryComponent implements OnInit {
     const target = event.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
 
-    // Position fixed tooltip relative to the viewport.
-    // We place it at the bottom-right of the target element.
-    // CSS handles RTL transform if needed, but here we just set top/left.
     this.tooltipData.set({
       attributes,
       x: rect.right,
-      y: rect.bottom + 5 // Small vertical gap
+      y: rect.bottom + 5
     });
   }
 
@@ -84,7 +81,6 @@ export default class WorkoutHistoryComponent implements OnInit {
   }
 
   private formatKey(key: string): string {
-    // Splits camelCase and capitalizes first letter
     const result = key.replace(/([A-Z])/g, ' $1');
     return result.charAt(0).toUpperCase() + result.slice(1);
   }

@@ -28,7 +28,6 @@ describe('WorkoutRegisterComponent', () => {
     fitnessServiceSpy = TestBed.inject(FitnessService) as jasmine.SpyObj<FitnessService>;
     authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
 
-    // Mock user
     authServiceSpy.currentUser.and.returnValue({
       userId: 'test-user',
       username: 'Test User',
@@ -42,7 +41,6 @@ describe('WorkoutRegisterComponent', () => {
       diseases: []
     });
 
-    // Default mock for getFitnessHistory to return empty list
     fitnessServiceSpy.getFitnessHistory.and.returnValue(of([]));
 
     fixture = TestBed.createComponent(WorkoutRegisterComponent);
@@ -102,7 +100,6 @@ describe('WorkoutRegisterComponent', () => {
 
     fitnessServiceSpy.getFitnessHistory.and.returnValue(of([mockData]));
 
-    // Trigger value change
     component.form.get('timestamp')?.setValue('2023-10-27');
 
     expect(fitnessServiceSpy.getFitnessHistory).toHaveBeenCalledWith('test-user', '2023-10-27', '2023-10-27');
@@ -111,14 +108,12 @@ describe('WorkoutRegisterComponent', () => {
   });
 
   it('should clear form when no data exists for date', () => {
-    // Setup initial state
     component.form.patchValue({
       averageHeartRate: 150
     });
 
     fitnessServiceSpy.getFitnessHistory.and.returnValue(of([]));
 
-    // Trigger value change
     component.form.get('timestamp')?.setValue('2023-10-28');
 
     expect(fitnessServiceSpy.getFitnessHistory).toHaveBeenCalledWith('test-user', '2023-10-28', '2023-10-28');

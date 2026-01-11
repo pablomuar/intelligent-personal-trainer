@@ -1,8 +1,10 @@
 package com.intelligent_personal_trainer.trainer_service.api;
 
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
+import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
+import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TrainerController {
 
     private final TrainerService trainerService;
+
+    private final AgenticTrainerChatService agenticTrainerChatService;
 
     @Operation(
             summary = "Generate workout plan",
@@ -47,5 +51,27 @@ public class TrainerController {
         return trainingPlanResponse != null ?
                 ResponseEntity.ok(trainingPlanResponse) :
                 ResponseEntity.status(500).build();
+    }
+
+    @Operation(
+            summary = "Chat with Agentic AI Trainer",
+            description = "Allows the user to send messages to the Agentic AI trainer and receive contextualized responses based on their profile and history."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Message processed successfully",
+                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal error during chat processing",
+                    content = @Content
+            )
+    })
+    @PostMapping("/chat")
+    public ResponseEntity<String> chatWithTrainer(@RequestBody ChatRequest request) {
+        String response = agenticTrainerChatService.chat(request);
+        return ResponseEntity.ok(response);
     }
 }

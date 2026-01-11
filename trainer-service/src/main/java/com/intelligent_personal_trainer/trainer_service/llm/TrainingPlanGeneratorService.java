@@ -37,7 +37,7 @@ public class TrainingPlanGeneratorService {
     public TrainingPlanLlmResponse generateTrainingPlan(String promptText, List<String> diseases) {
         boolean hasDiseases = !CollectionUtils.isEmpty(diseases);
 
-        String ragContext = hasDiseases ? retrieveRagContext(promptText, diseases) : "";
+        String ragContext = hasDiseases ? retrieveRagContext(diseases) : "";
         boolean useRag = hasDiseases && !ragContext.isEmpty();
 
         String finalSystemPrompt = useRag
@@ -62,7 +62,7 @@ public class TrainingPlanGeneratorService {
         }
     }
 
-    private String retrieveRagContext(String queryText, List<String> diseases) {
+    private String retrieveRagContext(List<String> diseases) {
         log.info("Retrieving RAG context for conditions: {} with TopK: {} and Threshold: {}", diseases, topK, similarityThreshold);
 
         List<Document> uniqueDocs = diseases.stream()

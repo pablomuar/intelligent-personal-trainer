@@ -22,10 +22,10 @@ public class TrainingPlanGeneratorService {
     private final ChatClient chatClient;
     private final VectorStore vectorStore;
 
-    @Value("${llm.system-prompt}")
+    @Value("${llm.plan-generator.system-prompt}")
     private String basicSystemPrompt;
 
-    @Value("${llm.rag-prompt}")
+    @Value("${llm.plan-generator.rag-prompt}")
     private String ragSystemPrompt;
 
     @Value("${llm.rag.search.top-k:3}")

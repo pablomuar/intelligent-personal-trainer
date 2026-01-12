@@ -4,8 +4,10 @@ import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +17,9 @@ public class AgenticTrainerChatService {
     private final ChatClient chatClient;
 
     private final List<ToolCallback> toolCallbacks;
+
+    @Value("${llm.agentic-chat.system-prompt}")
+    private String systemPrompt;
 
     public AgenticTrainerChatService(ChatClient chatClient, List<ToolCallbackProvider> toolProviders) {
         this.chatClient = chatClient;
@@ -26,22 +31,13 @@ public class AgenticTrainerChatService {
     }
 
     public String chat(ChatRequest chatRequest) {
+        String finalSystemPrompt = systemPrompt +
+                "\nThe user ID is: " + chatRequest.getUserId() +
+                "\nThe current date is: " + LocalDate.now();
+
         return chatClient.prompt()
-                .system("""
-                    Eres un entrenador personal experto e inteligente. Tu objetivo es crear planes o responder dudas basándote en DATOS REALES del usuario.
-                    
-                    HERRAMIENTAS DISPONIBLES:
-                    Tienes acceso a herramientas remotas para consultar:
-                    1. Perfil del usuario (getUserProfile): edad, peso, información medica, lesiones, enfermedades, etc.
-                    2. Historial de entrenamientos (getFitnessData): sesiones pasadas.
-                    
-                    REGLAS DE OPERACIÓN:
-                    - ANTES de responder, VERIFICA si tienes el contexto necesario. Si no, USA las herramientas.
-                    - Si el usuario pregunta "cómo voy este mes", consulta el historial con un rango de fechas adecuado.
-                    - Si el usuario menciona dolor o lesiones o información médica, consulta su perfil.
-                    - Sé amable, motivador y conciso.
-                    """)
-                .user(u -> u.text(chatRequest.getPrompt() + ". Mi ID de usuario es: " + chatRequest.getUserId()))
+                .system(finalSystemPrompt)
+                .user(u -> u.text(chatRequest.getPrompt()))
                 .toolCallbacks(toolCallbacks)
                 .call()
                 .content();

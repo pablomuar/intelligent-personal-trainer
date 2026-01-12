@@ -1,0 +1,19 @@
+spring:
+  ai:
+    gemini:
+      api-key: test-api-key
+      embedding:
+        api-key: test-api-key
+llm:
+  system-prompt: "Test System Prompt"
+  rag-prompt: "Test RAG Prompt"
+  rag:
+    search:
+      top-k: 2
+      similarity-threshold: 0.1
+    ingestion:
+      chunkSize: 100
+      minChunkSizeChars: 10
+      minChunkLenghtToEmbed: 1
+      maxNumChunks: 100
+      keepSeparator: true

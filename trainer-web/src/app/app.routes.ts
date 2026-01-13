@@ -25,6 +25,10 @@ export const routes: Routes = [
         loadComponent: () => import('./dashboard/pages/workout-generator/workout-generator.component')
       },
       {
+        path: 'chat',
+        loadComponent: () => import('./dashboard/pages/agentic-chat/agentic-chat.component')
+      },
+      {
         path: 'history',
         loadComponent: () => import('./dashboard/pages/workout-history/workout-history.component')
       },

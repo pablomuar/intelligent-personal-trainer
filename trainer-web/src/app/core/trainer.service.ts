@@ -29,6 +29,11 @@ export interface TrainingPlanResponse {
   trainingPlan: TrainingPlanContent;
 }
 
+export interface ChatRequest {
+  userId: string;
+  prompt: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,5 +45,9 @@ export class TrainerService {
 
   generatePlan(request: TrainingPlanRequest): Observable<TrainingPlanResponse> {
     return this.http.post<TrainingPlanResponse>(`${this.backendUrl}/trainer/plan`, request);
+  }
+
+  chatWithTrainer(request: ChatRequest): Observable<string> {
+    return this.http.post(`${this.backendUrl}/trainer/chat`, request, { responseType: 'text' });
   }
 }

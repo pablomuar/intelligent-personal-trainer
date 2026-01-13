@@ -39,49 +39,39 @@ class TrainingPlanGeneratorServiceTest {
 
     @Test
     void testGenerateTrainingPlan_NoDiseases() {
-        // Setup configuration
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
 
-        // Mock ChatClient chain
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.user(anyString())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
         when(callResponseSpec.entity(TrainingPlanLlmResponse.class)).thenReturn(new TrainingPlanLlmResponse("Rec", "Analysis", Collections.emptyList(), null));
 
-        // Execute
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", Collections.emptyList());
 
-        // Verify
         verify(chatClient).prompt();
         verify(chatClientRequestSpec).user("My Prompt");
-        // Ensure RAG search was NOT called
         verify(vectorStore, never()).similaritySearch(any(SearchRequest.class));
     }
 
     @Test
     void testGenerateTrainingPlan_WithDiseases_NoDocsFound() {
-        // Setup configuration
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "topK", 3);
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "similarityThreshold", 0.5);
 
-        // Mock VectorStore to return empty
         when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(Collections.emptyList());
 
-        // Mock ChatClient chain
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.user(anyString())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
         when(callResponseSpec.entity(TrainingPlanLlmResponse.class)).thenReturn(new TrainingPlanLlmResponse("Rec", "Analysis", Collections.emptyList(), null));
 
-        // Execute
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        // Verify
         verify(vectorStore).similaritySearch(any(SearchRequest.class));
         verify(chatClientRequestSpec).user("My Prompt");
     }

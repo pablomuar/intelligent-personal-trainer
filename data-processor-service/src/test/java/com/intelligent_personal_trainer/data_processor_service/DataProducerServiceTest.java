@@ -46,13 +46,6 @@ class DataProducerServiceTest {
                 .averageHeartRate(120.0)
                 .build();
 
-        // Use a real list or mock stream behavior?
-        // Since dataReaderList is a mocked List, stream() might need mocking, which is hard.
-        // It's better to InjectMocks with a real List if possible, but Spring injects a List of beans.
-        // Let's try to set the dataReaderList manually if possible or use a different approach.
-        // Since we used @InjectMocks, Mockito tries to inject mocks. But injecting a List of mocks is tricky.
-        // Let's instantiate DataProducerService manually to control the list.
-
         DataProducerService service = new DataProducerService(kafkaTemplate, List.of(fitnessDataReader));
 
         when(fitnessDataReader.supportsSource(sourceId)).thenReturn(true);

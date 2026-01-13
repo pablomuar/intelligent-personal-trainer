@@ -40,7 +40,6 @@ class TrainerServiceTest {
 
     @Test
     void testCreatePlan_Success() {
-        // Setup
         TrainingRequest request = new TrainingRequest();
         request.setUserId("user1");
         request.setDaysHistory(7);
@@ -62,10 +61,8 @@ class TrainerServiceTest {
         when(persistenceClient.getFitnessData(eq("user1"), anyString(), anyString())).thenReturn(history);
         when(trainingPlanGeneratorService.generateTrainingPlan(anyString(), any())).thenReturn(llmResponse);
 
-        // Execute
         TrainingPlanResponse response = trainerService.createPlan(request);
 
-        // Verify
         assertNotNull(response);
         assertEquals("user1", response.getUserId());
         assertEquals(llmResponse, response.getTrainingPlan());
@@ -76,29 +73,20 @@ class TrainerServiceTest {
 
     @Test
     void testCreatePlan_UserNotFound() {
-        // Setup
         TrainingRequest request = new TrainingRequest();
         request.setUserId("user1");
         request.setDaysHistory(7);
 
         when(userServiceClient.getUser("user1")).thenReturn(null);
-        // Persistence client might still be called in parallel, but we expect null result
-        // Mocking it to return something or null doesn't matter much if user is null, logic checks (user != null && history != null)
         when(persistenceClient.getFitnessData(eq("user1"), anyString(), anyString())).thenReturn(Collections.emptyList());
 
-        // Execute
         TrainingPlanResponse response = trainerService.createPlan(request);
 
-        // Verify
         assertNull(response);
     }
 
     @Test
     void testCreatePlan_PersistenceFailure_ShouldFailAssumingLogic() {
-        // Logic says: if (user != null && fitnessDataHistory != null)
-        // If persistence fails, the catch block returns null. So fitnessDataHistory will be null.
-
-        // Setup
         TrainingRequest request = new TrainingRequest();
         request.setUserId("user1");
         request.setDaysHistory(7);
@@ -107,10 +95,8 @@ class TrainerServiceTest {
         when(userServiceClient.getUser("user1")).thenReturn(user);
         when(persistenceClient.getFitnessData(eq("user1"), anyString(), anyString())).thenThrow(new RuntimeException("DB Error"));
 
-        // Execute
         TrainingPlanResponse response = trainerService.createPlan(request);
 
-        // Verify
         assertNull(response);
     }
 }

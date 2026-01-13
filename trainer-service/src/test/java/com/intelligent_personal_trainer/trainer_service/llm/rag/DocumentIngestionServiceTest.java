@@ -29,14 +29,12 @@ class DocumentIngestionServiceTest {
 
     @Test
     void testIngestFile() {
-        // Set properties values since they are injected via @Value
         ReflectionTestUtils.setField(documentIngestionService, "chunkSize", 100);
         ReflectionTestUtils.setField(documentIngestionService, "minChunkSizeChars", 10);
         ReflectionTestUtils.setField(documentIngestionService, "minChunkLenghtToEmbed", 1);
         ReflectionTestUtils.setField(documentIngestionService, "maxNumChunks", 100);
         ReflectionTestUtils.setField(documentIngestionService, "keepSeparator", true);
 
-        // Create a dummy resource content that Tika can read (text file)
         String content = "This is a test document content for RAG ingestion.";
         Resource resource = new ByteArrayResource(content.getBytes(StandardCharsets.UTF_8)) {
             @Override
@@ -45,10 +43,8 @@ class DocumentIngestionServiceTest {
             }
         };
 
-        // Execute
         documentIngestionService.ingestFile(resource);
 
-        // Verify that vectorStore.add() was called
         verify(vectorStore, times(1)).add(anyList());
     }
 }

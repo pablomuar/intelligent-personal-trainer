@@ -48,14 +48,12 @@ class UserControllerTest {
                 .diseases(List.of("Flu"))
                 .build();
 
-        // Use a Map to ensure password is serialized (WRITE_ONLY fields are skipped by default)
         java.util.Map<String, Object> userMap = objectMapper.convertValue(userInput, java.util.Map.class);
         userMap.put("password", "password");
 
         User createdUser = User.builder()
                 .userId("generated-id")
                 .username("john.doe")
-                // password should not be returned
                 .name("John")
                 .surname("Doe")
                 .age(30)
@@ -80,7 +78,6 @@ class UserControllerTest {
     @Test
     void createUser_shouldReturnBadRequest_whenInputIsInvalid() throws Exception {
         User userInput = User.builder()
-                // Name is required, missing it should fail
                 .surname("Doe")
                 .build();
 
@@ -145,7 +142,6 @@ class UserControllerTest {
                 .diseases(List.of("Asthma"))
                 .build();
 
-        // Use a Map to ensure password is serialized (WRITE_ONLY fields are skipped by default)
         java.util.Map<String, Object> userMap = objectMapper.convertValue(userInput, java.util.Map.class);
         userMap.put("password", "password");
 
@@ -186,7 +182,6 @@ class UserControllerTest {
                 .lifestyle(Lifestyle.MODERATELY_ACTIVE)
                 .build();
 
-        // Use a Map to ensure password is serialized (WRITE_ONLY fields are skipped by default)
         java.util.Map<String, Object> userMap = objectMapper.convertValue(userInput, java.util.Map.class);
         userMap.put("password", "password");
 

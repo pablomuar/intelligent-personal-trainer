@@ -48,7 +48,6 @@ class AgenticTrainerChatServiceTest {
 
     @Test
     void testChat() {
-        // Mock ChatClient chain
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(anyString())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.user(any(Consumer.class))).thenReturn(chatClientRequestSpec);
@@ -56,14 +55,12 @@ class AgenticTrainerChatServiceTest {
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
         when(callResponseSpec.content()).thenReturn("AI Response");
 
-        // Execute
         ChatRequest request = new ChatRequest();
         request.setUserId("user123");
         request.setPrompt("Hello");
 
         String response = agenticTrainerChatService.chat(request);
 
-        // Verify
         assertEquals("AI Response", response);
         verify(chatClientRequestSpec).system(contains("You are a trainer."));
         verify(chatClientRequestSpec).system(contains("user123"));

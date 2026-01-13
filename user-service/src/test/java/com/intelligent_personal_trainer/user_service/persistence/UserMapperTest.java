@@ -82,7 +82,7 @@ class UserMapperTest {
         assertNotNull(dto);
         assertEquals(entity.getUserId(), dto.getUserId());
         assertEquals(entity.getUsername(), dto.getUsername());
-        assertNull(dto.getPassword()); // Password should not be mapped to DTO
+        assertNull(dto.getPassword());
         assertEquals(entity.getName(), dto.getName());
         assertEquals(entity.getSurname(), dto.getSurname());
         assertEquals(entity.getAge(), dto.getAge());
@@ -113,15 +113,14 @@ class UserMapperTest {
         User dto = User.builder()
                 .name("NewName")
                 .age(31)
-                // Other fields null
                 .build();
 
         userMapper.updateEntityFromDto(entity, dto);
 
         assertEquals("NewName", entity.getName());
-        assertEquals("OldSurname", entity.getSurname()); // Should match old value
+        assertEquals("OldSurname", entity.getSurname());
         assertEquals(31, entity.getAge());
-        assertEquals(Lifestyle.SEDENTARY, entity.getLifestyle()); // Should match old value
+        assertEquals(Lifestyle.SEDENTARY, entity.getLifestyle());
     }
 
     @Test

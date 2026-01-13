@@ -56,7 +56,7 @@ class GenericCsvReaderServiceTest {
     void readData_HappyPath() throws IOException {
         String sourceId = "testSource";
         String userId = "user123";
-        String externalUserId = "ext_user_456"; // Different from userId to verify separation
+        String externalUserId = "ext_user_456";
         LocalDate date = LocalDate.of(2023, 10, 27);
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         String timeZone = "UTC";
@@ -106,9 +106,9 @@ class GenericCsvReaderServiceTest {
 
         File csvFile = createCsvFile("test_filter.csv", List.of(
             new String[]{"uid", "ts", "steps"},
-            new String[]{"targetUser", "2023-10-27 10:00:00", "100"}, // Match
-            new String[]{"otherUser", "2023-10-27 10:00:00", "200"},  // Wrong User
-            new String[]{"targetUser", "2023-10-28 10:00:00", "300"}  // Wrong Date
+            new String[]{"targetUser", "2023-10-27 10:00:00", "100"},
+            new String[]{"otherUser", "2023-10-27 10:00:00", "200"},
+            new String[]{"targetUser", "2023-10-28 10:00:00", "300"}
         ));
 
         Map<String, String> mappings = Map.of(
@@ -142,7 +142,6 @@ class GenericCsvReaderServiceTest {
         SourceConfig config = new SourceConfig(sourceId, "UTC", "non_existent_file.csv", "yyyy-MM-dd", Map.of());
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
-        // Should handle exception internally and return empty list
         List<FitnessData> result = service.readData(sourceId, "user", "extUser", LocalDate.now());
 
         assertTrue(result.isEmpty());
@@ -157,8 +156,8 @@ class GenericCsvReaderServiceTest {
         File csvFile = createCsvFile("test_missing.csv", List.of(
             new String[]{"uid", "ts"},
             new String[]{"user1", "2023-10-27 10:00:00"},
-            new String[]{"user1", null}, // Missing timestamp
-            new String[]{null, "2023-10-27 10:00:00"} // Missing userId
+            new String[]{"user1", null},
+            new String[]{null, "2023-10-27 10:00:00"}
         ));
 
         Map<String, String> mappings = Map.of(
@@ -198,7 +197,6 @@ class GenericCsvReaderServiceTest {
         List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
 
         assertEquals(1, result.size());
-        // primitive int default is 0
         assertEquals(0, result.get(0).getTotalSteps());
     }
 

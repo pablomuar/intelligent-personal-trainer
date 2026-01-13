@@ -106,7 +106,6 @@ public class FitnessDataPersistenceServiceTest {
         FitnessData dto = FitnessData.builder().userId(userId).build();
 
         Instant startExpected = from.atStartOfDay(ZoneId.of("UTC")).toInstant();
-        // End time is Instant.now(), so we can't match it exactly. We use any() for end date.
 
         when(jpaRepository.findByUserIdAndTimestampBetweenOrderByTimestampDesc(eq(userId), eq(startExpected), any(Instant.class)))
                 .thenReturn(entities);

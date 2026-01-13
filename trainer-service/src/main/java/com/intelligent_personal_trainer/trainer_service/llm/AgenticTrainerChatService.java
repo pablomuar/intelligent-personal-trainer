@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
 import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AgenticTrainerChatService {
 
@@ -31,6 +33,8 @@ public class AgenticTrainerChatService {
     }
 
     public String chat(ChatRequest chatRequest) {
+        log.info("Starting agentic chat for user: {}", chatRequest.getUserId());
+
         String finalSystemPrompt = systemPrompt +
                 "\nThe user ID is: " + chatRequest.getUserId() +
                 "\nThe current date is: " + LocalDate.now();

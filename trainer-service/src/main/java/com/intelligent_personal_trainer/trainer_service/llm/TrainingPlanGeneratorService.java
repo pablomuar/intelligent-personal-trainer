@@ -1,12 +1,11 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
 import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
+import com.intelligent_personal_trainer.trainer_service.llm.rag.RagDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -20,7 +19,8 @@ import java.util.stream.Collectors;
 public class TrainingPlanGeneratorService {
 
     private final ChatClient chatClient;
-    private final VectorStore vectorStore;
+
+    private final RagDocumentService ragDocumentService;
 
     @Value("${llm.plan-generator.system-prompt}")
     private String basicSystemPrompt;
@@ -28,11 +28,6 @@ public class TrainingPlanGeneratorService {
     @Value("${llm.plan-generator.rag-prompt}")
     private String ragSystemPrompt;
 
-    @Value("${llm.rag.search.top-k:3}")
-    private int topK;
-
-    @Value("${llm.rag.search.similarity-threshold:0.5}")
-    private double similarityThreshold;
 
     public TrainingPlanLlmResponse generateTrainingPlan(String promptText, List<String> diseases) {
         boolean hasDiseases = !CollectionUtils.isEmpty(diseases);
@@ -63,10 +58,10 @@ public class TrainingPlanGeneratorService {
     }
 
     private String retrieveRagContext(List<String> diseases) {
-        log.info("Retrieving RAG context for conditions: {} with TopK: {} and Threshold: {}", diseases, topK, similarityThreshold);
+        log.info("Retrieving RAG context for conditions: {}", diseases);
 
         List<Document> uniqueDocs = diseases.stream()
-                .map(this::performSearch)
+                .map(ragDocumentService::performSearch)
                 .flatMap(List::stream)
                 .distinct()
                 .toList();
@@ -80,20 +75,5 @@ public class TrainingPlanGeneratorService {
         return uniqueDocs.stream()
                 .map(Document::getFormattedContent)
                 .collect(Collectors.joining("\n---\n"));
-    }
-
-    private List<Document> performSearch(String query) {
-        List<Document> similaritySearch = vectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query(query)
-                        .topK(topK)
-                        .similarityThreshold(similarityThreshold)
-                        .build()
-        );
-
-        log.debug("Found {} relevant documents for \"{}\" query", similaritySearch.size(), query);
-        similaritySearch.forEach(doc -> log.debug("Distance: {}, Source: {}", doc.getScore(), doc.getMetadata().get("source")));
-
-        return similaritySearch;
     }
 }

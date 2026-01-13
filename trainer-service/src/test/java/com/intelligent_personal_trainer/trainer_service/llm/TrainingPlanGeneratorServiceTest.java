@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -46,60 +45,48 @@ class TrainingPlanGeneratorServiceTest {
 
     @Test
     void testGenerateTrainingPlan_NoDiseases() {
-        // Setup configuration
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
 
-        // Mock ChatClient chain
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.user(anyString())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
         when(callResponseSpec.entity(TrainingPlanLlmResponse.class)).thenReturn(new TrainingPlanLlmResponse("Rec", "Analysis", Collections.emptyList(), null));
 
-        // Execute
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", Collections.emptyList());
 
-        // Verify
         verify(chatClient).prompt();
         verify(chatClientRequestSpec).user("My Prompt");
 
-        // Verify System Prompt
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);
         verify(chatClientRequestSpec).system(systemCaptor.capture());
         systemCaptor.getValue().accept(systemSpec);
         verify(systemSpec).text("Basic System Prompt");
 
-        // Ensure RAG search was NOT called
         verify(vectorStore, never()).similaritySearch(any(SearchRequest.class));
     }
 
     @Test
     void testGenerateTrainingPlan_WithDiseases_NoDocsFound() {
-        // Setup configuration
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "topK", 3);
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "similarityThreshold", 0.5);
 
-        // Mock VectorStore to return empty
         when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(Collections.emptyList());
 
-        // Mock ChatClient chain
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.user(anyString())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
         when(callResponseSpec.entity(TrainingPlanLlmResponse.class)).thenReturn(new TrainingPlanLlmResponse("Rec", "Analysis", Collections.emptyList(), null));
 
-        // Execute
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        // Verify
         verify(vectorStore).similaritySearch(any(SearchRequest.class));
         verify(chatClientRequestSpec).user("My Prompt");
 
-        // Verify System Prompt (should still be basic because no docs found)
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);
         verify(chatClientRequestSpec).system(systemCaptor.capture());
         systemCaptor.getValue().accept(systemSpec);
@@ -108,38 +95,30 @@ class TrainingPlanGeneratorServiceTest {
 
     @Test
     void testGenerateTrainingPlan_WithDiseases_DocsFound() {
-        // Setup configuration
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "topK", 3);
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "similarityThreshold", 0.5);
 
-        // Mock VectorStore to return docs
         Document doc = new Document("Doc Content", Map.of("source", "wiki"));
         when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(doc));
 
-        // Mock ChatClient chain
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.user(anyString())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
         when(callResponseSpec.entity(TrainingPlanLlmResponse.class)).thenReturn(new TrainingPlanLlmResponse("Rec", "Analysis", Collections.emptyList(), null));
 
-        // Execute
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        // Verify
         verify(vectorStore).similaritySearch(any(SearchRequest.class));
         verify(chatClientRequestSpec).user("My Prompt");
 
-        // Verify System Prompt (should include RAG)
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);
         verify(chatClientRequestSpec).system(systemCaptor.capture());
         systemCaptor.getValue().accept(systemSpec);
 
-        // Expect basic + rag prompt
         verify(systemSpec).text("Basic System Prompt\n\nRAG System Prompt");
-        // Expect context param
         verify(systemSpec).param(eq("context"), contains("Doc Content"));
     }
 }

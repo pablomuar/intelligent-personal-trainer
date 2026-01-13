@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +43,7 @@ class AgenticTrainerChatServiceTest {
     void setUp() {
         when(toolCallbackProvider.getToolCallbacks()).thenReturn(new ToolCallback[]{});
         agenticTrainerChatService = new AgenticTrainerChatService(chatClient, List.of(toolCallbackProvider));
+        ReflectionTestUtils.setField(agenticTrainerChatService, "systemPrompt", "You are a trainer.");
     }
 
     @Test
@@ -59,7 +62,8 @@ class AgenticTrainerChatServiceTest {
         String response = agenticTrainerChatService.chat(request);
 
         assertEquals("AI Response", response);
-        verify(chatClientRequestSpec).system(anyString());
+        verify(chatClientRequestSpec).system(contains("You are a trainer."));
+        verify(chatClientRequestSpec).system(contains("user123"));
         verify(chatClientRequestSpec).user(any(Consumer.class));
         verify(chatClientRequestSpec).toolCallbacks(anyList());
     }

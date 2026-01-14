@@ -91,7 +91,7 @@ export default class WorkoutHistoryComponent implements OnInit {
 
     switch (range) {
       case '24h':
-        fromDate.setDate(toDate.getDate() - 1);
+        fromDate.setDate(toDate.getDate() - 2);
         break;
       case '7d':
         fromDate.setDate(toDate.getDate() - 7);

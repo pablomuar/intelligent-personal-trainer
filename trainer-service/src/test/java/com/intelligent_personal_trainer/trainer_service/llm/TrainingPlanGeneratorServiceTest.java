@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
 import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
+import com.intelligent_personal_trainer.trainer_service.llm.rag.RagDocumentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
@@ -29,7 +28,7 @@ class TrainingPlanGeneratorServiceTest {
     private ChatClient chatClient;
 
     @Mock
-    private VectorStore vectorStore;
+    private RagDocumentService ragDocumentService;
 
     @Mock
     private ChatClient.ChatClientRequestSpec chatClientRequestSpec;
@@ -64,17 +63,15 @@ class TrainingPlanGeneratorServiceTest {
         systemCaptor.getValue().accept(systemSpec);
         verify(systemSpec).text("Basic System Prompt");
 
-        verify(vectorStore, never()).similaritySearch(any(SearchRequest.class));
+        verify(ragDocumentService, never()).performSearch(anyString());
     }
 
     @Test
     void testGenerateTrainingPlan_WithDiseases_NoDocsFound() {
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
-        ReflectionTestUtils.setField(trainingPlanGeneratorService, "topK", 3);
-        ReflectionTestUtils.setField(trainingPlanGeneratorService, "similarityThreshold", 0.5);
 
-        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(Collections.emptyList());
+        when(ragDocumentService.performSearch(anyString())).thenReturn(Collections.emptyList());
 
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
@@ -84,7 +81,7 @@ class TrainingPlanGeneratorServiceTest {
 
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        verify(vectorStore).similaritySearch(any(SearchRequest.class));
+        verify(ragDocumentService).performSearch(anyString());
         verify(chatClientRequestSpec).user("My Prompt");
 
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);
@@ -97,11 +94,9 @@ class TrainingPlanGeneratorServiceTest {
     void testGenerateTrainingPlan_WithDiseases_DocsFound() {
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
-        ReflectionTestUtils.setField(trainingPlanGeneratorService, "topK", 3);
-        ReflectionTestUtils.setField(trainingPlanGeneratorService, "similarityThreshold", 0.5);
 
         Document doc = new Document("Doc Content", Map.of("source", "wiki"));
-        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(doc));
+        when(ragDocumentService.performSearch(anyString())).thenReturn(List.of(doc));
 
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
@@ -111,7 +106,7 @@ class TrainingPlanGeneratorServiceTest {
 
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        verify(vectorStore).similaritySearch(any(SearchRequest.class));
+        verify(ragDocumentService).performSearch(anyString());
         verify(chatClientRequestSpec).user("My Prompt");
 
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);

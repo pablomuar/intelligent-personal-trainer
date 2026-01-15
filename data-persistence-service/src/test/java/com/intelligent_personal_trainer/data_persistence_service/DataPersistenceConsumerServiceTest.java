@@ -29,6 +29,6 @@ public class DataPersistenceConsumerServiceTest {
 
         consumerService.consume(data);
 
-        verify(fitnessDataPersistenceService).processAndSave(data);
+        verify(fitnessDataPersistenceService).saveOrUpdate(data);
     }
 }

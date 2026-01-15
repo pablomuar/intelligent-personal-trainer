@@ -24,12 +24,6 @@ public class FitnessDataPersistenceService {
     private final FitnessDataMapper fitnessDataMapper;
 
     @Transactional
-    public void processAndSave(FitnessData fitnessData) {
-        jpaRepository.save(fitnessDataMapper.toEntity(fitnessData));
-        log.debug("Data of user {} saved successfully", fitnessData.getUserId());
-    }
-
-    @Transactional
     public void saveOrUpdate(FitnessData fitnessData) {
         Instant timestamp = fitnessData.getTimestamp();
         LocalDate date = LocalDate.ofInstant(timestamp, UTC_ZONE);

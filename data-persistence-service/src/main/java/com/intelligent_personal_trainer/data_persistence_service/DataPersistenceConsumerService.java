@@ -20,6 +20,6 @@ public class DataPersistenceConsumerService {
     @KafkaListener(topics = KafkaConstants.FITNESS_DATA_TOPIC)
     public void consume(FitnessData data) {
         log.debug("Consuming data of userId \"{}\" from topic {}", data.getUserId(), KafkaConstants.FITNESS_DATA_TOPIC);
-        fitnessDataPersistenceService.processAndSave(data);
+        fitnessDataPersistenceService.saveOrUpdate(data);
     }
 }

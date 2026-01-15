@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +45,7 @@ public class FitnessDataPersistenceServiceTest {
 
         when(fitnessDataMapper.toEntity(dto)).thenReturn(entity);
 
-        persistenceService.processAndSave(dto);
+        persistenceService.saveOrUpdate(dto);
 
         verify(fitnessDataMapper).toEntity(dto);
         verify(jpaRepository).save(entity);

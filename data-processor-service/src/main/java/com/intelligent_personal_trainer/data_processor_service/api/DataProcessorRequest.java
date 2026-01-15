@@ -21,11 +21,16 @@ public record DataProcessorRequest(
         @NotBlank(message = "Source ID cannot be empty")
         String sourceId,
 
-        @Schema(description = "Date of the data to extract (YYYY-MM-DD)", example = "2023-12-19")
+        @Schema(description = "Date of the data to extract (YYYY-MM-DD). If using a range, this is the start date.", example = "2025-12-19")
         @JsonFormat(pattern = "yyyy-MM-dd")
         @NotNull(message = "Date is required")
         @PastOrPresent(message = "Date cannot be in the future")
-        LocalDate date
+        LocalDate date,
+
+        @Schema(description = "Optional end date for a range (YYYY-MM-DD). If provided, data will be processed from 'date' to 'dateTo' inclusive.", example = "2025-12-20")
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        @PastOrPresent(message = "Date cannot be in the future")
+        LocalDate dateTo
 ) {
 
 }

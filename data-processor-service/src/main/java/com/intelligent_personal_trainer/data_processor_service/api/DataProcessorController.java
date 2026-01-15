@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/data-processor")
 @RequiredArgsConstructor
@@ -28,11 +30,20 @@ public class DataProcessorController {
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     @PostMapping("/trigger")
     public ResponseEntity<String> triggerIngestion(@Valid @RequestBody DataProcessorRequest request) {
-        dataProducerService.processAndSendData(
-                request.sourceId(),
-                request.userId(),
-                request.externalSourceUserId(),
-                request.date()
+        LocalDate startDate = request.date();
+        LocalDate endDate = request.dateTo() != null ? request.dateTo() : startDate;
+
+        if (endDate.isBefore(startDate)) {
+            return ResponseEntity.badRequest().body("End date cannot be before start date");
+        }
+
+        startDate.datesUntil(endDate.plusDays(1)).forEach(currentDate ->
+                dataProducerService.processAndSendData(
+                        request.sourceId(),
+                        request.userId(),
+                        request.externalSourceUserId(),
+                        currentDate
+                )
         );
 
         return ResponseEntity.accepted()

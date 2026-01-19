@@ -28,13 +28,15 @@ public class FitnessDataPersistenceService {
         Instant timestamp = fitnessData.getTimestamp();
         LocalDate date = LocalDate.ofInstant(timestamp, UTC_ZONE);
 
-        Instant startOfDay = date.atStartOfDay(UTC_ZONE).toInstant();
-        Instant endOfDay = date.plusDays(1).atStartOfDay(UTC_ZONE).toInstant().minusNanos(1);
-
+        // Saving fitness data with timestamp set to the end of the day
+        fitnessData.setTimestamp(date.atTime(23, 59, 59).atZone(UTC_ZONE).toInstant());
         FitnessDataEntity entityToSave = fitnessDataMapper.toEntity(fitnessData);
 
+        Instant startOfDay = date.atStartOfDay(UTC_ZONE).toInstant();
+        Instant endOfDay = date.plusDays(1).atStartOfDay(UTC_ZONE).toInstant().minusNanos(1);
         List<FitnessDataEntity> existingList = jpaRepository.findByUserIdAndTimestampBetweenOrderByTimestampDesc(
                 fitnessData.getUserId(), startOfDay, endOfDay);
+
         if (!existingList.isEmpty()) {
             FitnessDataEntity existingEntity = existingList.getFirst();
             entityToSave.setId(existingEntity.getId());

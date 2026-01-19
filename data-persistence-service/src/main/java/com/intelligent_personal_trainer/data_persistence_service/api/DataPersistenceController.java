@@ -1,6 +1,7 @@
-package com.intelligent_personal_trainer.data_persistence_service;
+package com.intelligent_personal_trainer.data_persistence_service.api;
 
 import com.intelligent_personal_trainer.common.data.FitnessData;
+import com.intelligent_personal_trainer.data_persistence_service.FitnessDataPersistenceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

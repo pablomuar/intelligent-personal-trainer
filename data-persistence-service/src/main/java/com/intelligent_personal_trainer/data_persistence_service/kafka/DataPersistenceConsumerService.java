@@ -1,7 +1,8 @@
-package com.intelligent_personal_trainer.data_persistence_service;
+package com.intelligent_personal_trainer.data_persistence_service.kafka;
 
 import com.intelligent_personal_trainer.common.constants.KafkaConstants;
 import com.intelligent_personal_trainer.common.data.FitnessData;
+import com.intelligent_personal_trainer.data_persistence_service.FitnessDataPersistenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;

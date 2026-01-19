@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.data_persistence_service;
 
 import com.intelligent_personal_trainer.common.data.FitnessData;
+import com.intelligent_personal_trainer.data_persistence_service.kafka.DataPersistenceConsumerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

@@ -75,7 +75,7 @@ public class GenericCsvReaderService implements FitnessDataReader {
 
     private FitnessData mapRowToEntity(Map<String, String> row, SourceConfig config, LocalDateTime dateTime, String userId) {
         FitnessData.FitnessDataBuilder builder = FitnessData.builder();
-        builder.timestamp(dateTime.atZone(ZoneId.of(config.timeZone())).toInstant());
+        builder.timestamp(dateTime.atZone(ZoneId.of("UTC")).toInstant());
         builder.userId(userId);
 
         List<WorkoutData> allWorkouts = new ArrayList<>();

@@ -4,7 +4,6 @@ import java.util.Map;
 
 public record SourceConfig(
         String sourceId,
-        String timeZone,
         String filePath,
         String dateFormat,
         Map<String, String> mappings

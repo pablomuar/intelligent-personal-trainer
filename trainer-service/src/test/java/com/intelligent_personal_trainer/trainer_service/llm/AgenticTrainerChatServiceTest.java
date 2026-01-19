@@ -1,6 +1,9 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
+import com.intelligent_personal_trainer.trainer_service.dto.ChatHistoryResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
+import com.intelligent_personal_trainer.trainer_service.entity.ChatHistory;
+import com.intelligent_personal_trainer.trainer_service.repository.ChatHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +14,8 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -37,12 +42,15 @@ class AgenticTrainerChatServiceTest {
     @Mock
     private ToolCallbackProvider toolCallbackProvider;
 
+    @Mock
+    private ChatHistoryRepository chatHistoryRepository;
+
     private AgenticTrainerChatService agenticTrainerChatService;
 
     @BeforeEach
     void setUp() {
         when(toolCallbackProvider.getToolCallbacks()).thenReturn(new ToolCallback[]{});
-        agenticTrainerChatService = new AgenticTrainerChatService(chatClient, List.of(toolCallbackProvider));
+        agenticTrainerChatService = new AgenticTrainerChatService(chatClient, List.of(toolCallbackProvider), chatHistoryRepository);
         ReflectionTestUtils.setField(agenticTrainerChatService, "systemPrompt", "You are a trainer.");
     }
 
@@ -66,5 +74,25 @@ class AgenticTrainerChatServiceTest {
         verify(chatClientRequestSpec).system(contains("user123"));
         verify(chatClientRequestSpec).user(any(Consumer.class));
         verify(chatClientRequestSpec).toolCallbacks(anyList());
+        verify(chatHistoryRepository).save(any(ChatHistory.class));
+    }
+
+    @Test
+    void testGetChatHistory() {
+        ChatHistory history = ChatHistory.builder()
+                .id(1L)
+                .userId("u1")
+                .prompt("p")
+                .response("r")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(chatHistoryRepository.findByUserIdAndCreatedAtBetweenOrderByCreatedAtDesc(anyString(), any(), any()))
+                .thenReturn(List.of(history));
+
+        List<ChatHistoryResponse> result = agenticTrainerChatService.getChatHistory("u1", LocalDate.now(), LocalDate.now());
+
+        assertEquals(1, result.size());
+        assertEquals("p", result.get(0).getPrompt());
     }
 }

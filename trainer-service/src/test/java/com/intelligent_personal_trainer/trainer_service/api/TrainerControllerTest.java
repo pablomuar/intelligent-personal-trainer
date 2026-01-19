@@ -2,6 +2,7 @@ package com.intelligent_personal_trainer.trainer_service.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
+import com.intelligent_personal_trainer.trainer_service.dto.ChatHistoryResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
@@ -13,8 +14,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,5 +83,22 @@ class TrainerControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello there!"));
+    }
+
+    @Test
+    void testGetChatHistory() throws Exception {
+        ChatHistoryResponse response = ChatHistoryResponse.builder()
+                .id(1L)
+                .prompt("Hi")
+                .response("Hello")
+                .build();
+
+        when(agenticTrainerChatService.getChatHistory(any(), any(), any()))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/trainer/chat/history")
+                        .param("userId", "user1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
     }
 }

@@ -1,0 +1,29 @@
+
+> trainer-web@0.0.0 start
+> ng serve
+
+❯ Building...
+✔ Building...
+Initial chunk files | Names                       | Raw size
+main.js             | main                        |  2.91 kB |
+chunk-TA3AXOCO.js   | -                           |  2.67 kB |
+styles.css          | styles                      | 95 bytes |
+
+                    | Initial total               |  5.67 kB
+
+Lazy chunk files    | Names                       | Raw size
+chunk-FD7W64LF.js   | workout-register-component  | 25.03 kB |
+chunk-NJRCPOI5.js   | register-component          | 18.17 kB |
+chunk-BKUFMV6D.js   | workout-history-component   | 16.16 kB |
+chunk-AGVE6HQ7.js   | agentic-chat-component      | 15.04 kB |
+chunk-R3KPQ3GZ.js   | workout-generator-component | 13.41 kB |
+chunk-4XA5GEZN.js   | dashboard-component         |  6.85 kB |
+chunk-6W4IRPCO.js   | login-component             |  6.66 kB |
+chunk-5K4KIXJG.js   | -                           |  1.26 kB |
+chunk-NHYE4AXK.js   | -                           |  1.01 kB |
+
+Application bundle generation complete. [3.668 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://localhost:4200/

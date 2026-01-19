@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.api;
 
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
+import com.intelligent_personal_trainer.trainer_service.dto.ChatHistoryResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
@@ -12,11 +13,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/trainer")
@@ -73,5 +80,18 @@ public class TrainerController {
     public ResponseEntity<String> chatWithTrainer(@RequestBody ChatRequest request) {
         String response = agenticTrainerChatService.chat(request);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Get Chat History")
+    @GetMapping("/chat/history")
+    public ResponseEntity<List<ChatHistoryResponse>> getChatHistory(
+            @RequestParam String userId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+    ) {
+        if (from == null) from = LocalDate.now().minusDays(30);
+        if (to == null) to = LocalDate.now();
+
+        return ResponseEntity.ok(agenticTrainerChatService.getChatHistory(userId, from, to));
     }
 }

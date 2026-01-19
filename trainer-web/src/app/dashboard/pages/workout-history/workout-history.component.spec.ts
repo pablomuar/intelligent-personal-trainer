@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { FitnessService, FitnessData } from '../../../core/fitness.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import WorkoutHistoryComponent from './workout-history.component';
@@ -81,5 +82,24 @@ describe('WorkoutHistoryComponent', () => {
   it('should hide tooltip', () => {
     component.hideTooltip();
     expect(component.tooltipData()).toBeNull();
+  });
+
+  it('should display date in UTC', () => {
+    const mockData: FitnessData[] = [{
+      timestamp: '2026-01-19 23:59:59.000000 +00:00',
+      totalSteps: 1000,
+      averageHeartRate: 100,
+      totalCaloriesBurned: 500,
+      userId: 'u1',
+      totalDistance: 5,
+      workoutDataList: []
+    }];
+
+    fitnessServiceSpy.getFitnessHistory.and.returnValue(of(mockData));
+    component.loadData('7d');
+    fixture.detectChanges();
+
+    const dateCell = fixture.debugElement.query(By.css('tbody tr td:first-child'));
+    expect(dateCell.nativeElement.textContent).toContain('Jan 19, 2026');
   });
 });

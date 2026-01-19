@@ -38,7 +38,7 @@
         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
         <tr *ngFor="let item of history()" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
           <td class="px-6 py-4 font-medium text-text-main">
-            {{ item.timestamp | date:'mediumDate' }}
+            {{ item.timestamp | date:'mediumDate':'UTC' }}
           </td>
           <td class="px-6 py-4">
             <div class="flex items-center gap-2">

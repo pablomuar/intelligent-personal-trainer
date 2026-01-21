@@ -89,8 +89,11 @@ public class TrainerController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
     ) {
-        if (from == null) from = LocalDate.now().minusDays(30);
-        if (to == null) to = LocalDate.now();
+        if (from == null)
+            from = LocalDate.now().minusDays(30);
+
+        if (to == null)
+            to = LocalDate.now();
 
         return ResponseEntity.ok(agenticTrainerChatService.getChatHistory(userId, from, to));
     }

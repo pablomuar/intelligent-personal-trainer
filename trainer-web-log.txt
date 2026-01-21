@@ -27,3 +27,14 @@ Application bundle generation complete. [3.668 seconds]
 Watch mode enabled. Watching for file changes...
 NOTE: Raw file sizes do not reflect development server per-request transformations.
   ➜  Local:   http://localhost:4200/
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                  | Raw size
+main.js             | main                   |  2.91 kB |
+
+Lazy chunk files    | Names                  | Raw size
+chunk-WZJOBZV7.js   | agentic-chat-component | 14.28 kB |
+
+Application bundle generation complete. [3.425 seconds]
+
+Page reload sent to client(s).

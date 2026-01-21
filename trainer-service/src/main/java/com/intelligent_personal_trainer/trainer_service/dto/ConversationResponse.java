@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChatRequest {
-    private String userId;
-    private Long conversationId;
-    private String prompt;
+public class ConversationResponse {
+    private Long id;
+    private String title;
+    private LocalDateTime lastMessageAt;
 }

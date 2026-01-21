@@ -1,9 +1,9 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { AuthService } from '../../../core/auth/auth.service';
-import { TrainerService, ChatHistoryItem } from '../../../core/trainer.service';
+import { TrainerService, Conversation, ChatMessage } from '../../../core/trainer.service';
 
 @Component({
   selector: 'app-agentic-chat',
@@ -11,58 +11,131 @@ import { TrainerService, ChatHistoryItem } from '../../../core/trainer.service';
   imports: [CommonModule, ReactiveFormsModule, MarkdownModule],
   templateUrl: './agentic-chat.component.html',
 })
-export default class AgenticChatComponent implements OnInit {
+export default class AgenticChatComponent implements OnInit, AfterViewChecked {
   authService = inject(AuthService);
   private trainerService = inject(TrainerService);
   private fb = inject(FormBuilder);
 
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+
   user = this.authService.currentUser;
-  response = signal<string | null>(null);
+  conversations = signal<Conversation[]>([]);
+  messages = signal<ChatMessage[]>([]);
+  currentConversationId = signal<number | null>(null);
+
   loading = signal(false);
   error = signal<string | null>(null);
-  history = signal<ChatHistoryItem[]>([]);
 
   form = this.fb.group({
     prompt: ['', Validators.required],
   });
 
+  private shouldScrollToBottom = false;
+
   ngOnInit() {
-    this.loadHistory();
+    this.loadConversations();
   }
 
-  loadHistory() {
-    if (this.user()) {
-      // Default last 30 days
-      const to = new Date().toISOString().split('T')[0];
-      const fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - 30);
-      const from = fromDate.toISOString().split('T')[0];
+  ngAfterViewChecked() {
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
+    }
+  }
 
-      this.trainerService.getChatHistory(this.user()!.userId!, from, to)
+  scrollToBottom(): void {
+    try {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    } catch(err) { }
+  }
+
+  loadConversations() {
+    if (this.user()) {
+      this.trainerService.getConversations(this.user()!.userId!)
         .subscribe({
-          next: (data) => this.history.set(data),
-          error: (err) => console.error('Failed to load history', err)
+          next: (data) => this.conversations.set(data),
+          error: (err) => console.error('Failed to load conversations', err)
         });
     }
   }
 
+  selectConversation(conversation: Conversation) {
+    this.currentConversationId.set(conversation.id);
+    this.loading.set(true);
+    this.error.set(null);
+    this.messages.set([]); // Clear previous while loading
+
+    this.trainerService.getConversationMessages(conversation.id)
+      .subscribe({
+        next: (msgs) => {
+          this.messages.set(msgs);
+          this.loading.set(false);
+          this.shouldScrollToBottom = true;
+        },
+        error: (err) => {
+          console.error('Failed to load messages', err);
+          this.error.set('Failed to load conversation.');
+          this.loading.set(false);
+        }
+      });
+  }
+
+  startNewChat() {
+    this.currentConversationId.set(null);
+    this.messages.set([]);
+    this.form.reset();
+    this.error.set(null);
+  }
+
   sendMessage() {
     if (this.form.valid && this.user()) {
+      const { prompt } = this.form.getRawValue();
+      if (!prompt) return;
+
       this.loading.set(true);
       this.error.set(null);
-      this.response.set(null);
-      const { prompt } = this.form.getRawValue();
+
+      // Optimistic update for UI
+      const optimisticMsg: ChatMessage = {
+          id: -1,
+          role: 'USER',
+          content: prompt,
+          createdAt: new Date().toISOString()
+      };
+
+      // We append to current messages
+      this.messages.update(prev => [...prev, optimisticMsg]);
+      this.form.reset();
+      this.shouldScrollToBottom = true;
 
       this.trainerService
         .chatWithTrainer({
           userId: this.user()!.userId!,
-          prompt: prompt!,
+          prompt: prompt,
+          conversationId: this.currentConversationId() || undefined
         })
         .subscribe({
           next: (res) => {
-            this.response.set(res);
+            // If it was a new conversation, set ID
+            if (!this.currentConversationId()) {
+                this.currentConversationId.set(res.conversationId);
+                this.loadConversations(); // Refresh sidebar for title
+            } else {
+                // If existing, just refresh sidebar to update "last message" timestamp/order
+                this.loadConversations();
+            }
+
+            const aiMsg: ChatMessage = {
+                id: Math.random(), // Temporary ID until reload
+                role: 'ASSISTANT',
+                content: res.response,
+                createdAt: new Date().toISOString()
+            };
+
+            this.messages.update(prev => [...prev, aiMsg]);
+
             this.loading.set(false);
-            this.loadHistory();
+            this.shouldScrollToBottom = true;
           },
           error: (err) => {
             console.error('Failed to get chat response', err);
@@ -71,17 +144,5 @@ export default class AgenticChatComponent implements OnInit {
           },
         });
     }
-  }
-
-  selectHistoryItem(item: ChatHistoryItem) {
-    this.form.patchValue({ prompt: item.prompt });
-    this.response.set(item.response);
-    this.error.set(null);
-  }
-
-  startNewChat() {
-    this.form.reset();
-    this.response.set(null);
-    this.error.set(null);
   }
 }

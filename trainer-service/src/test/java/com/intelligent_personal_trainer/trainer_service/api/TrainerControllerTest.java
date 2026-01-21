@@ -2,10 +2,7 @@ package com.intelligent_personal_trainer.trainer_service.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
-import com.intelligent_personal_trainer.trainer_service.dto.ChatHistoryResponse;
-import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
-import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
-import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
+import com.intelligent_personal_trainer.trainer_service.dto.*;
 import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +11,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -76,28 +74,49 @@ class TrainerControllerTest {
         ChatRequest request = new ChatRequest();
         request.setPrompt("Hello");
 
-        when(agenticTrainerChatService.chat(any(ChatRequest.class))).thenReturn("Hello there!");
+        ChatResponse response = ChatResponse.builder()
+                .conversationId(1L)
+                .title("New Chat")
+                .response("Hello there!")
+                .build();
+
+        when(agenticTrainerChatService.chat(any(ChatRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/trainer/chat")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello there!"));
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @Test
-    void testGetChatHistory() throws Exception {
-        ChatHistoryResponse response = ChatHistoryResponse.builder()
+    void testGetConversations() throws Exception {
+        ConversationResponse response = ConversationResponse.builder()
                 .id(1L)
-                .prompt("Hi")
-                .response("Hello")
+                .title("Test Chat")
+                .lastMessageAt(LocalDateTime.now())
                 .build();
 
-        when(agenticTrainerChatService.getChatHistory(any(), any(), any()))
+        when(agenticTrainerChatService.getConversations(anyString()))
                 .thenReturn(List.of(response));
 
-        mockMvc.perform(get("/trainer/chat/history")
+        mockMvc.perform(get("/trainer/chat/conversations")
                         .param("userId", "user1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
+    }
+
+    @Test
+    void testGetConversationMessages() throws Exception {
+        ChatMessageResponse response = ChatMessageResponse.builder()
+                .id(1L)
+                .content("Hello")
+                .build();
+
+        when(agenticTrainerChatService.getConversationMessages(anyLong()))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/trainer/chat/conversations/1/messages"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
     }

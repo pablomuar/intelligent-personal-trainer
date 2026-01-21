@@ -1,8 +1,10 @@
 package com.intelligent_personal_trainer.trainer_service.api;
 
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
-import com.intelligent_personal_trainer.trainer_service.dto.ChatHistoryResponse;
+import com.intelligent_personal_trainer.trainer_service.dto.ChatMessageResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
+import com.intelligent_personal_trainer.trainer_service.dto.ChatResponse;
+import com.intelligent_personal_trainer.trainer_service.dto.ConversationResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
 import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
@@ -13,16 +15,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -68,7 +69,7 @@ public class TrainerController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Message processed successfully",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
@@ -77,24 +78,20 @@ public class TrainerController {
             )
     })
     @PostMapping("/chat")
-    public ResponseEntity<String> chatWithTrainer(@RequestBody ChatRequest request) {
-        String response = agenticTrainerChatService.chat(request);
+    public ResponseEntity<ChatResponse> chatWithTrainer(@RequestBody ChatRequest request) {
+        ChatResponse response = agenticTrainerChatService.chat(request);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Get Chat History")
-    @GetMapping("/chat/history")
-    public ResponseEntity<List<ChatHistoryResponse>> getChatHistory(
-            @RequestParam String userId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
-    ) {
-        if (from == null)
-            from = LocalDate.now().minusDays(30);
+    @Operation(summary = "Get User Conversations")
+    @GetMapping("/chat/conversations")
+    public ResponseEntity<List<ConversationResponse>> getConversations(@RequestParam String userId) {
+        return ResponseEntity.ok(agenticTrainerChatService.getConversations(userId));
+    }
 
-        if (to == null)
-            to = LocalDate.now();
-
-        return ResponseEntity.ok(agenticTrainerChatService.getChatHistory(userId, from, to));
+    @Operation(summary = "Get Conversation Messages")
+    @GetMapping("/chat/conversations/{id}/messages")
+    public ResponseEntity<List<ChatMessageResponse>> getConversationMessages(@PathVariable Long id) {
+        return ResponseEntity.ok(agenticTrainerChatService.getConversationMessages(id));
     }
 }

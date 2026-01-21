@@ -45,12 +45,21 @@ CREATE TABLE IF NOT EXISTS user_diseases (
 );
 
 
--- CHAT HISTORY
+-- AGENTIC CHAT (Conversations & Messages)
 
-CREATE TABLE IF NOT EXISTS chat_history (
+CREATE TABLE IF NOT EXISTS conversations (
     id BIGSERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
-    prompt TEXT NOT NULL,
-    response TEXT NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id BIGSERIAL PRIMARY KEY,
+    conversation_id BIGINT NOT NULL,
+    role VARCHAR(50) NOT NULL, -- 'USER' or 'ASSISTANT'
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
 );

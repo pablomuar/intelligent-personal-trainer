@@ -1,4 +1,3 @@
-
 -- Vector extension
 
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -43,4 +42,15 @@ CREATE TABLE IF NOT EXISTS user_diseases (
      user_id VARCHAR(255) NOT NULL,
      disease VARCHAR(255),
      FOREIGN KEY (user_id) REFERENCES user_data(user_id)
+);
+
+
+-- CHAT HISTORY
+
+CREATE TABLE IF NOT EXISTS chat_history (
+    id BIGSERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    prompt TEXT NOT NULL,
+    response TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );

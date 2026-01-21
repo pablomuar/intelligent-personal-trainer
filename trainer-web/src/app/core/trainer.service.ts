@@ -34,6 +34,13 @@ export interface ChatRequest {
   prompt: string;
 }
 
+export interface ChatHistoryItem {
+  id: number;
+  prompt: string;
+  response: string;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -49,5 +56,13 @@ export class TrainerService {
 
   chatWithTrainer(request: ChatRequest): Observable<string> {
     return this.http.post(`${this.backendUrl}/trainer/chat`, request, { responseType: 'text' });
+  }
+
+  getChatHistory(userId: string, from?: string, to?: string): Observable<ChatHistoryItem[]> {
+    let params: any = { userId };
+    if (from) params.from = from;
+    if (to) params.to = to;
+
+    return this.http.get<ChatHistoryItem[]>(`${this.backendUrl}/trainer/chat/history`, { params });
   }
 }

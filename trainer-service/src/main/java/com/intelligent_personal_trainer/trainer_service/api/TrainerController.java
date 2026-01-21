@@ -9,6 +9,8 @@ import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse
 import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
 import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/trainer")
 @RequiredArgsConstructor
-@Tag(name = "Trainer Service", description = "API for AI-based workout plan generation")
+@Tag(name = "Trainer Service", description = "API for AI-based workout plan generation and Agentic Chat")
 public class TrainerController {
 
     private final TrainerService trainerService;
@@ -63,13 +65,18 @@ public class TrainerController {
 
     @Operation(
             summary = "Chat with Agentic AI Trainer",
-            description = "Allows the user to send messages to the Agentic AI trainer and receive contextualized responses based on their profile and history."
+            description = "Sends a message to the AI trainer. If 'conversationId' is provided, the message is appended to that thread. If not, a new conversation is started. The AI uses context from the last N messages."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Message processed successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Conversation not found (if conversationId provided)",
+                    content = @Content
             ),
             @ApiResponse(
                     responseCode = "500",
@@ -83,15 +90,39 @@ public class TrainerController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Get User Conversations")
+    @Operation(
+            summary = "Get User Conversations",
+            description = "Retrieves a list of all chat conversations for a specific user, ordered by most recent activity."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "List of conversations retrieved successfully",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ConversationResponse.class)))
+            )
+    })
     @GetMapping("/chat/conversations")
-    public ResponseEntity<List<ConversationResponse>> getConversations(@RequestParam String userId) {
+    public ResponseEntity<List<ConversationResponse>> getConversations(
+            @Parameter(description = "The ID of the user to retrieve conversations for", required = true)
+            @RequestParam String userId) {
         return ResponseEntity.ok(agenticTrainerChatService.getConversations(userId));
     }
 
-    @Operation(summary = "Get Conversation Messages")
+    @Operation(
+            summary = "Get Conversation Messages",
+            description = "Retrieves the full history of messages for a specific conversation, ordered chronologically."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Messages retrieved successfully",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ChatMessageResponse.class)))
+            )
+    })
     @GetMapping("/chat/conversations/{id}/messages")
-    public ResponseEntity<List<ChatMessageResponse>> getConversationMessages(@PathVariable Long id) {
+    public ResponseEntity<List<ChatMessageResponse>> getConversationMessages(
+            @Parameter(description = "The ID of the conversation to retrieve messages from", required = true)
+            @PathVariable Long id) {
         return ResponseEntity.ok(agenticTrainerChatService.getConversationMessages(id));
     }
 }

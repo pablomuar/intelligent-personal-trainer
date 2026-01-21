@@ -21,6 +21,7 @@ export default class AgenticChatComponent implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
   history = signal<ChatHistoryItem[]>([]);
+  isSidebarCollapsed = signal(false);
 
   form = this.fb.group({
     prompt: ['', Validators.required],
@@ -83,5 +84,9 @@ export default class AgenticChatComponent implements OnInit {
     this.form.reset();
     this.response.set(null);
     this.error.set(null);
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed.update((v) => !v);
   }
 }

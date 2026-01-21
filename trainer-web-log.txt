@@ -38,3 +38,97 @@ chunk-WZJOBZV7.js   | agentic-chat-component | 14.28 kB |
 Application bundle generation complete. [3.425 seconds]
 
 Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                  | Raw size
+main.js             | main                   |  2.91 kB |
+
+Lazy chunk files    | Names                  | Raw size
+chunk-Y2JDXPXX.js   | agentic-chat-component | 14.39 kB |
+
+Application bundle generation complete. [2.218 seconds]
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.392 seconds]
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Opening tag "aside" not terminated.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.html:4:2:
+[37m      4 │   [32m<aside [class.w-20]="isSidebarCollapsed()" [class.md:w-1/[37m3]="!isS...
+        ╵   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component AgenticChatComponent.
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./agentic-chat.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Unexpected closing tag "aside". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.html:57:2:
+[37m      57 │   [32m</aside>[37m
+         ╵   [32m~~~~~~~~[0m
+
+  Error occurs in the template of component AgenticChatComponent.
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./agentic-chat.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.395 seconds]
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Opening tag "aside" not terminated.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.html:4:2:
+[37m      4 │   [32m<aside [class.w-20]="isSidebarCollapsed()" [class.md:w-1/[37m3]="!isS...
+        ╵   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component AgenticChatComponent.
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./agentic-chat.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Unexpected closing tag "aside". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.html:57:2:
+[37m      57 │   [32m</aside>[37m
+         ╵   [32m~~~~~~~~[0m
+
+  Error occurs in the template of component AgenticChatComponent.
+
+    src/app/dashboard/pages/agentic-chat/agentic-chat.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./agentic-chat.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names                       | Raw size
+main.js             | main                        |  2.91 kB |
+chunk-TA3AXOCO.js   | -                           |  2.67 kB |
+styles.css          | styles                      | 95 bytes |
+
+                    | Initial total               |  5.67 kB
+
+Lazy chunk files    | Names                       | Raw size
+chunk-FD7W64LF.js   | workout-register-component  | 25.03 kB |
+chunk-4OP5XXYF.js   | agentic-chat-component      | 19.23 kB |
+chunk-NJRCPOI5.js   | register-component          | 18.17 kB |
+chunk-BKUFMV6D.js   | workout-history-component   | 16.16 kB |
+chunk-R3KPQ3GZ.js   | workout-generator-component | 13.41 kB |
+chunk-4XA5GEZN.js   | dashboard-component         |  6.85 kB |
+chunk-6W4IRPCO.js   | login-component             |  6.66 kB |
+chunk-5K4KIXJG.js   | -                           |  1.26 kB |
+chunk-NHYE4AXK.js   | -                           |  1.01 kB |
+
+Application bundle generation complete. [0.424 seconds]
+
+Page reload sent to client(s).

@@ -80,6 +80,22 @@ export default class AgenticChatComponent implements OnInit, AfterViewChecked {
       });
   }
 
+  deleteConversation(conversationId: number, event: Event) {
+    event.stopPropagation();
+
+    if (confirm('Are you sure you want to delete this conversation?')) {
+        this.trainerService.deleteConversation(conversationId).subscribe({
+            next: () => {
+                this.conversations.update(prev => prev.filter(c => c.id !== conversationId));
+                if (this.currentConversationId() === conversationId) {
+                    this.startNewChat();
+                }
+            },
+            error: (err) => console.error('Failed to delete conversation', err)
+        });
+    }
+  }
+
   startNewChat() {
     this.currentConversationId.set(null);
     this.messages.set([]);

@@ -77,4 +77,8 @@ export class TrainerService {
   getConversationMessages(conversationId: number): Observable<ChatMessage[]> {
     return this.http.get<ChatMessage[]>(`${this.backendUrl}/trainer/chat/conversations/${conversationId}/messages`);
   }
+
+  deleteConversation(conversationId: number): Observable<void> {
+    return this.http.delete<void>(`${this.backendUrl}/trainer/chat/conversations/${conversationId}`);
+  }
 }

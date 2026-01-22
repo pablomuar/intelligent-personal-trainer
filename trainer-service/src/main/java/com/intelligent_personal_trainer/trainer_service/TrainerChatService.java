@@ -81,6 +81,11 @@ public class TrainerChatService {
                 .toList();
     }
 
+    @Transactional
+    public void deleteConversation(Long conversationId) {
+        conversationRepository.deleteById(conversationId);
+    }
+
     private Conversation getOrCreateConversation(ChatRequest chatRequest) {
         Conversation conversation;
         if (chatRequest.getConversationId() != null) {

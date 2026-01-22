@@ -115,4 +115,26 @@ public class TrainerController {
             @PathVariable Long id) {
         return ResponseEntity.ok(trainerChatService.getConversationMessages(id));
     }
+
+    @Operation(
+            summary = "Delete Conversation",
+            description = "Deletes a specific conversation and all its associated messages."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Conversation deleted successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Conversation not found"
+            )
+    })
+    @DeleteMapping("/chat/conversations/{id}")
+    public ResponseEntity<Void> deleteConversation(
+            @Parameter(description = "The ID of the conversation to delete", required = true)
+            @PathVariable Long id) {
+        trainerChatService.deleteConversation(id);
+        return ResponseEntity.ok().build();
+    }
 }

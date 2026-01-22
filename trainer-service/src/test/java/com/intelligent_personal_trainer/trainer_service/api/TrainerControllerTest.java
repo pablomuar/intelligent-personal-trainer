@@ -3,7 +3,7 @@ package com.intelligent_personal_trainer.trainer_service.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
 import com.intelligent_personal_trainer.trainer_service.dto.*;
-import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
+import com.intelligent_personal_trainer.trainer_service.TrainerChatService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,7 +33,7 @@ class TrainerControllerTest {
     private TrainerService trainerService;
 
     @MockBean
-    private AgenticTrainerChatService agenticTrainerChatService;
+    private TrainerChatService trainerChatService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -80,7 +80,7 @@ class TrainerControllerTest {
                 .response("Hello there!")
                 .build();
 
-        when(agenticTrainerChatService.chat(any(ChatRequest.class))).thenReturn(response);
+        when(trainerChatService.chat(any(ChatRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/trainer/chat")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ class TrainerControllerTest {
                 .lastMessageAt(LocalDateTime.now())
                 .build();
 
-        when(agenticTrainerChatService.getConversations(anyString()))
+        when(trainerChatService.getConversations(anyString()))
                 .thenReturn(List.of(response));
 
         mockMvc.perform(get("/trainer/chat/conversations")
@@ -113,7 +113,7 @@ class TrainerControllerTest {
                 .content("Hello")
                 .build();
 
-        when(agenticTrainerChatService.getConversationMessages(anyLong()))
+        when(trainerChatService.getConversationMessages(anyLong()))
                 .thenReturn(List.of(response));
 
         mockMvc.perform(get("/trainer/chat/conversations/1/messages"))

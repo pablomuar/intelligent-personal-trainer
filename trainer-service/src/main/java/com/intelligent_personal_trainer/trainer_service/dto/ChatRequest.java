@@ -13,4 +13,5 @@ public class ChatRequest {
     private String userId;
     private Long conversationId;
     private String prompt;
+    private String userLocation;
 }

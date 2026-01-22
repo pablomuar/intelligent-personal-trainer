@@ -38,7 +38,8 @@ public class AgenticTrainerChatService {
     public String chat(ChatRequest chatRequest, List<Message> historicMessages) {
         String finalSystemPrompt = systemPrompt +
                 "\nThe user ID is: " + chatRequest.getUserId() +
-                "\nThe current date is: " + LocalDate.now();
+                "\nThe current date is: " + LocalDate.now() +
+                "\nUser Location: " + (chatRequest.getUserLocation() != null ? chatRequest.getUserLocation() : "Unknown");
 
         return chatClient.prompt()
                 .system(finalSystemPrompt)

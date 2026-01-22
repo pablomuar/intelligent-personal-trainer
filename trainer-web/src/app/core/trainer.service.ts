@@ -33,6 +33,7 @@ export interface ChatRequest {
   userId: string;
   prompt: string;
   conversationId?: number;
+  userLocation?: string;
 }
 
 export interface ChatResponse {

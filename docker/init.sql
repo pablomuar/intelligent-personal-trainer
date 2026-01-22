@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS user_diseases (
 );
 
 
--- AGENTIC CHAT (Conversations & Messages)
+-- CHAT HISTORY
 
 CREATE TABLE IF NOT EXISTS conversations (
     id BIGSERIAL PRIMARY KEY,
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS conversations (
 CREATE TABLE IF NOT EXISTS chat_messages (
     id BIGSERIAL PRIMARY KEY,
     conversation_id BIGINT NOT NULL,
-    role VARCHAR(50) NOT NULL, -- 'USER' or 'ASSISTANT'
+    role VARCHAR(50) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE

@@ -1,13 +1,8 @@
 package com.intelligent_personal_trainer.trainer_service.api;
 
+import com.intelligent_personal_trainer.trainer_service.TrainerChatService;
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
-import com.intelligent_personal_trainer.trainer_service.dto.ChatMessageResponse;
-import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
-import com.intelligent_personal_trainer.trainer_service.dto.ChatResponse;
-import com.intelligent_personal_trainer.trainer_service.dto.ConversationResponse;
-import com.intelligent_personal_trainer.trainer_service.dto.TrainingPlanResponse;
-import com.intelligent_personal_trainer.trainer_service.dto.TrainingRequest;
-import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
+import com.intelligent_personal_trainer.trainer_service.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -18,13 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,7 +25,8 @@ public class TrainerController {
 
     private final TrainerService trainerService;
 
-    private final AgenticTrainerChatService agenticTrainerChatService;
+    private final TrainerChatService trainerChatService;
+
 
     @Operation(
             summary = "Generate workout plan",
@@ -86,7 +76,7 @@ public class TrainerController {
     })
     @PostMapping("/chat")
     public ResponseEntity<ChatResponse> chatWithTrainer(@RequestBody ChatRequest request) {
-        ChatResponse response = agenticTrainerChatService.chat(request);
+        ChatResponse response = trainerChatService.chat(request);
         return ResponseEntity.ok(response);
     }
 
@@ -105,7 +95,7 @@ public class TrainerController {
     public ResponseEntity<List<ConversationResponse>> getConversations(
             @Parameter(description = "The ID of the user to retrieve conversations for", required = true)
             @RequestParam String userId) {
-        return ResponseEntity.ok(agenticTrainerChatService.getConversations(userId));
+        return ResponseEntity.ok(trainerChatService.getConversations(userId));
     }
 
     @Operation(
@@ -123,6 +113,6 @@ public class TrainerController {
     public ResponseEntity<List<ChatMessageResponse>> getConversationMessages(
             @Parameter(description = "The ID of the conversation to retrieve messages from", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(agenticTrainerChatService.getConversationMessages(id));
+        return ResponseEntity.ok(trainerChatService.getConversationMessages(id));
     }
 }

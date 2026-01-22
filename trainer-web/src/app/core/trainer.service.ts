@@ -32,19 +32,31 @@ export interface TrainingPlanResponse {
 export interface ChatRequest {
   userId: string;
   prompt: string;
+  conversationId?: number;
 }
 
-export interface ChatHistoryItem {
-  id: number;
-  prompt: string;
+export interface ChatResponse {
+  conversationId: number;
+  title: string;
   response: string;
+}
+
+export interface Conversation {
+  id: number;
+  title: string;
+  lastMessageAt: string;
+}
+
+export interface ChatMessage {
+  id: number;
+  role: 'USER' | 'ASSISTANT';
+  content: string;
   createdAt: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class TrainerService {
   private backendUrl = environment.backendUrl;
 
@@ -54,15 +66,19 @@ export class TrainerService {
     return this.http.post<TrainingPlanResponse>(`${this.backendUrl}/trainer/plan`, request);
   }
 
-  chatWithTrainer(request: ChatRequest): Observable<string> {
-    return this.http.post(`${this.backendUrl}/trainer/chat`, request, { responseType: 'text' });
+  chatWithTrainer(request: ChatRequest): Observable<ChatResponse> {
+    return this.http.post<ChatResponse>(`${this.backendUrl}/trainer/chat`, request);
   }
 
-  getChatHistory(userId: string, from?: string, to?: string): Observable<ChatHistoryItem[]> {
-    let params: any = { userId };
-    if (from) params.from = from;
-    if (to) params.to = to;
+  getConversations(userId: string): Observable<Conversation[]> {
+    return this.http.get<Conversation[]>(`${this.backendUrl}/trainer/chat/conversations`, { params: { userId } });
+  }
 
-    return this.http.get<ChatHistoryItem[]>(`${this.backendUrl}/trainer/chat/history`, { params });
+  getConversationMessages(conversationId: number): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`${this.backendUrl}/trainer/chat/conversations/${conversationId}/messages`);
+  }
+
+  deleteConversation(conversationId: number): Observable<void> {
+    return this.http.delete<void>(`${this.backendUrl}/trainer/chat/conversations/${conversationId}`);
   }
 }

@@ -39,8 +39,11 @@ public class AgenticTrainerChatService {
     public LlmResponse chat(ChatRequest chatRequest, List<Message> historicMessages) {
         String finalSystemPrompt = systemPrompt +
                 "\nThe user ID is: " + chatRequest.getUserId() +
-                "\nThe current date is: " + LocalDate.now() +
-                "\nUser Location: " + (chatRequest.getUserLocation() != null ? chatRequest.getUserLocation() : "Unknown");
+                "\nThe current date is: " + LocalDate.now();
+
+        if (chatRequest.getUserLocation() != null) {
+            finalSystemPrompt += "\nThe user location in decimal degree coordinates is: " + chatRequest.getUserLocation();
+        }
 
         return chatClient.prompt()
                 .system(finalSystemPrompt)

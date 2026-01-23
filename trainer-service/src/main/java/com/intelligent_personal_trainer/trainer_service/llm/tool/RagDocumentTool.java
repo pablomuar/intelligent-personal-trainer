@@ -1,5 +1,6 @@
-package com.intelligent_personal_trainer.trainer_service.llm.rag;
+package com.intelligent_personal_trainer.trainer_service.llm.tool;
 
+import com.intelligent_personal_trainer.trainer_service.llm.rag.RagDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -8,13 +9,13 @@ import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class RagDocumentTool implements ToolCallbackProvider {
 

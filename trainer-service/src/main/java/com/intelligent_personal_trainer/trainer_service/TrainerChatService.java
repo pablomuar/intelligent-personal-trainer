@@ -7,6 +7,7 @@ import com.intelligent_personal_trainer.trainer_service.dto.ConversationResponse
 import com.intelligent_personal_trainer.trainer_service.entity.ChatMessage;
 import com.intelligent_personal_trainer.trainer_service.entity.Conversation;
 import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
+import com.intelligent_personal_trainer.trainer_service.llm.dto.LlmResponse;
 import com.intelligent_personal_trainer.trainer_service.repository.ChatMessageRepository;
 import com.intelligent_personal_trainer.trainer_service.repository.ConversationRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +48,14 @@ public class TrainerChatService {
 
         persistChatMessage(conversation, ChatMessage.Role.USER, chatRequest.getPrompt());
 
+        LlmResponse response = agenticTrainerChatService.chat(chatRequest, historicMessages);
         ChatResponse chatResponse = ChatResponse.builder()
                 .conversationId(conversation.getId())
                 .title(conversation.getTitle())
-                .response(agenticTrainerChatService.chat(chatRequest, historicMessages))
+                .response(response)
                 .build();
 
-        persistChatMessage(conversation, ChatMessage.Role.ASSISTANT, chatResponse.getResponse());
+        persistChatMessage(conversation, ChatMessage.Role.ASSISTANT, chatResponse.toString());
 
         log.info("Finished trainer chat with {} history size for user: {}", historicMessages.size(), chatRequest.getUserId());
 

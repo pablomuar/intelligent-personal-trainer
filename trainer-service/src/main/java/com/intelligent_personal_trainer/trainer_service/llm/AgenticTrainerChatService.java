@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
 import com.intelligent_personal_trainer.trainer_service.dto.ChatRequest;
+import com.intelligent_personal_trainer.trainer_service.llm.dto.LlmResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
@@ -35,7 +36,7 @@ public class AgenticTrainerChatService {
     }
 
     @Transactional
-    public String chat(ChatRequest chatRequest, List<Message> historicMessages) {
+    public LlmResponse chat(ChatRequest chatRequest, List<Message> historicMessages) {
         String finalSystemPrompt = systemPrompt +
                 "\nThe user ID is: " + chatRequest.getUserId() +
                 "\nThe current date is: " + LocalDate.now();
@@ -46,6 +47,6 @@ public class AgenticTrainerChatService {
                 .user(u -> u.text(chatRequest.getPrompt()))
                 .toolCallbacks(toolCallbacks)
                 .call()
-                .content();
+                .entity(LlmResponse.class);
     }
 }

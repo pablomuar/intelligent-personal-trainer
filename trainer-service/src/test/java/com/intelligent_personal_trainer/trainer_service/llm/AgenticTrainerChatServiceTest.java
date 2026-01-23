@@ -69,6 +69,6 @@ class AgenticTrainerChatServiceTest {
         assertEquals("AI Response", response.chatMessage());
 
         verify(chatClientRequestSpec).system(contains("You are a trainer."));
-        verify(chatClientRequestSpec).system(contains("User Location: 40.7128,-74.0060"));
+        verify(chatClientRequestSpec).system(contains("The user location in decimal degree coordinates is: 40.7128,-74.0060"));
     }
 }

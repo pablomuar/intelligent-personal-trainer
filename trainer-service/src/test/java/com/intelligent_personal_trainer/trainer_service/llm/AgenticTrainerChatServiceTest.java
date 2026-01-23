@@ -62,11 +62,13 @@ class AgenticTrainerChatServiceTest {
         ChatRequest request = new ChatRequest();
         request.setUserId("user123");
         request.setPrompt("Hello");
+        request.setUserLocation("40.7128,-74.0060");
 
         LlmResponse response = agenticTrainerChatService.chat(request, Collections.emptyList());
 
         assertEquals("AI Response", response.chatMessage());
 
         verify(chatClientRequestSpec).system(contains("You are a trainer."));
+        verify(chatClientRequestSpec).system(contains("User Location: 40.7128,-74.0060"));
     }
 }

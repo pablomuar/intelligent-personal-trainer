@@ -31,9 +31,21 @@ export default class AgenticChatComponent implements OnInit, AfterViewChecked {
   });
 
   private shouldScrollToBottom = false;
+  private userLocation: string | null = null;
 
   ngOnInit() {
     this.loadConversations();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.userLocation = `${position.coords.latitude},${position.coords.longitude}`;
+        },
+        (error) => {
+          console.warn('Geolocation permission denied or failed', error);
+          this.userLocation = null;
+        }
+      );
+    }
   }
 
   ngAfterViewChecked() {
@@ -128,7 +140,8 @@ export default class AgenticChatComponent implements OnInit, AfterViewChecked {
         .chatWithTrainer({
           userId: this.user()!.userId!,
           prompt: prompt,
-          conversationId: this.currentConversationId() || undefined
+          conversationId: this.currentConversationId() || undefined,
+          userLocation: this.userLocation || undefined
         })
         .subscribe({
           next: (res) => {

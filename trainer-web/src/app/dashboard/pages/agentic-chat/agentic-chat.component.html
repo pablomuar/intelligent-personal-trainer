@@ -67,9 +67,56 @@
                         'bg-white dark:bg-[#1e2837] text-text-main dark:text-white border border-gray-200 dark:border-gray-700 rounded-bl-none': msg.role === 'ASSISTANT'
                      }">
                      @if (msg.role === 'ASSISTANT') {
-                        <div class="prose dark:prose-invert max-w-none prose-sm prose-img:rounded-xl prose-a:text-primary hover:prose-a:text-primary-dark">
-                             <markdown [data]="msg.content"></markdown>
-                        </div>
+                        @let response = parseLlmResponse(msg.content);
+                        @if (response && response.type === 'PLAN_GENERATED') {
+                            <div class="flex flex-col gap-4 w-full">
+                                <div class="prose dark:prose-invert max-w-none prose-sm">
+                                    <markdown [data]="response.chatMessage"></markdown>
+                                </div>
+                                <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 w-full bg-surface-light dark:bg-surface-dark">
+                                  <table class="w-full text-left text-sm">
+                                    <thead class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                      <tr>
+                                        <th class="p-3 font-semibold text-text-secondary whitespace-nowrap">Day</th>
+                                        <th class="p-3 font-semibold text-text-secondary whitespace-nowrap">Duration</th>
+                                        <th class="p-3 font-semibold text-text-secondary whitespace-nowrap">Intensity</th>
+                                        <th class="p-3 font-semibold text-text-secondary min-w-[200px]">Session</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                      @for (session of response.sessions; track session.day) {
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                          <td class="p-3 font-medium text-text-main dark:text-white align-top">{{ session.day }}</td>
+                                          <td class="p-3 text-text-secondary whitespace-nowrap align-top">{{ session.duration }} min</td>
+                                          <td class="p-3 align-top">
+                                            <span class="inline-flex px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap"
+                                                  [ngClass]="{
+                                                    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': session.intensity === 'LOW',
+                                                    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': session.intensity === 'LOW_MEDIUM',
+                                                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': session.intensity === 'MEDIUM',
+                                                    'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400': session.intensity === 'MEDIUM_HIGH',
+                                                    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': session.intensity === 'HIGH',
+                                                    'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400': session.intensity === 'REST'
+                                                  }">
+                                              {{ formatIntensity(session.intensity) }}
+                                            </span>
+                                          </td>
+                                          <td class="p-3 text-text-main dark:text-gray-300 align-top leading-relaxed">{{ session.sessionDescription }}</td>
+                                        </tr>
+                                      }
+                                    </tbody>
+                                  </table>
+                                </div>
+                            </div>
+                        } @else if (response) {
+                             <div class="prose dark:prose-invert max-w-none prose-sm prose-img:rounded-xl prose-a:text-primary hover:prose-a:text-primary-dark">
+                                 <markdown [data]="response.chatMessage"></markdown>
+                            </div>
+                        } @else {
+                            <div class="prose dark:prose-invert max-w-none prose-sm prose-img:rounded-xl prose-a:text-primary hover:prose-a:text-primary-dark">
+                                 <markdown [data]="msg.content"></markdown>
+                            </div>
+                        }
                      } @else {
                         <div class="whitespace-pre-wrap">{{ msg.content }}</div>
                      }

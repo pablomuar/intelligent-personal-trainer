@@ -29,6 +29,12 @@ export interface TrainingPlanResponse {
   trainingPlan: TrainingPlanContent;
 }
 
+export interface LlmResponse {
+  chatMessage: string;
+  sessions: PlanSession[] | null;
+  type: 'CHAT_ONLY' | 'PLAN_GENERATED';
+}
+
 export interface ChatRequest {
   userId: string;
   prompt: string;
@@ -38,7 +44,7 @@ export interface ChatRequest {
 export interface ChatResponse {
   conversationId: number;
   title: string;
-  response: string;
+  response: LlmResponse;
 }
 
 export interface Conversation {

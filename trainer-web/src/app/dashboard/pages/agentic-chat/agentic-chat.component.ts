@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { AuthService } from '../../../core/auth/auth.service';
-import { TrainerService, Conversation, ChatMessage } from '../../../core/trainer.service';
+import { TrainerService, Conversation, ChatMessage, LlmResponse } from '../../../core/trainer.service';
 
 @Component({
   selector: 'app-agentic-chat',
@@ -144,7 +144,7 @@ export default class AgenticChatComponent implements OnInit, AfterViewChecked {
             const aiMsg: ChatMessage = {
                 id: Math.random(), // Temporary ID until reload
                 role: 'ASSISTANT',
-                content: res.response,
+                content: JSON.stringify(res.response),
                 createdAt: new Date().toISOString()
             };
 
@@ -160,5 +160,18 @@ export default class AgenticChatComponent implements OnInit, AfterViewChecked {
           },
         });
     }
+  }
+
+  parseLlmResponse(content: string): LlmResponse | null {
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      console.error('Failed to parse LlmResponse', e);
+      return null;
+    }
+  }
+
+  formatIntensity(intensity: string): string {
+    return intensity.replace(/_/g, ' ');
   }
 }

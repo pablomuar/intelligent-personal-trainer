@@ -3,6 +3,7 @@ package com.intelligent_personal_trainer.trainer_service.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.trainer_service.TrainerService;
 import com.intelligent_personal_trainer.trainer_service.dto.*;
+import com.intelligent_personal_trainer.trainer_service.llm.dto.LlmResponse;
 import com.intelligent_personal_trainer.trainer_service.TrainerChatService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,10 +75,11 @@ class TrainerControllerTest {
         ChatRequest request = new ChatRequest();
         request.setPrompt("Hello");
 
+        LlmResponse llmResponse = new LlmResponse("Hello there!", null, LlmResponse.ResponseType.CHAT_ONLY);
         ChatResponse response = ChatResponse.builder()
                 .conversationId(1L)
                 .title("New Chat")
-                .response("Hello there!")
+                .response(llmResponse)
                 .build();
 
         when(trainerChatService.chat(any(ChatRequest.class))).thenReturn(response);

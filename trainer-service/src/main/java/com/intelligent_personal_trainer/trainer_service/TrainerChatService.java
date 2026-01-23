@@ -8,6 +8,8 @@ import com.intelligent_personal_trainer.trainer_service.entity.ChatMessage;
 import com.intelligent_personal_trainer.trainer_service.entity.Conversation;
 import com.intelligent_personal_trainer.trainer_service.llm.AgenticTrainerChatService;
 import com.intelligent_personal_trainer.trainer_service.llm.dto.LlmResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.trainer_service.repository.ChatMessageRepository;
 import com.intelligent_personal_trainer.trainer_service.repository.ConversationRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,8 @@ public class TrainerChatService {
 
     private final ChatMessageRepository chatMessageRepository;
 
+    private final ObjectMapper objectMapper;
+
     @Value("${llm.trainer-chat.conversation.memory-window-size:10}")
     private int conversationMemoryWindowSize;
 
@@ -55,7 +59,13 @@ public class TrainerChatService {
                 .response(response)
                 .build();
 
-        persistChatMessage(conversation, ChatMessage.Role.ASSISTANT, chatResponse.toString());
+        try {
+            persistChatMessage(conversation, ChatMessage.Role.ASSISTANT, objectMapper.writeValueAsString(response));
+
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing LlmResponse to JSON", e);
+            throw new RuntimeException("Error saving chat response", e);
+        }
 
         log.info("Finished trainer chat with {} history size for user: {}", historicMessages.size(), chatRequest.getUserId());
 

@@ -1,6 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
 import com.intelligent_personal_trainer.trainer_service.dto.*;
+import com.intelligent_personal_trainer.trainer_service.llm.dto.LlmResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,15 +55,17 @@ class AgenticTrainerChatServiceTest {
         when(chatClientRequestSpec.user(any(Consumer.class))).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.toolCallbacks(anyList())).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
-        when(callResponseSpec.content()).thenReturn("AI Response");
+
+        LlmResponse mockResponse = new LlmResponse("AI Response", null, LlmResponse.ResponseType.CHAT_ONLY);
+        when(callResponseSpec.entity(LlmResponse.class)).thenReturn(mockResponse);
 
         ChatRequest request = new ChatRequest();
         request.setUserId("user123");
         request.setPrompt("Hello");
 
-        String response = agenticTrainerChatService.chat(request, Collections.emptyList());
+        LlmResponse response = agenticTrainerChatService.chat(request, Collections.emptyList());
 
-        assertEquals("AI Response", response);
+        assertEquals("AI Response", response.chatMessage());
 
         verify(chatClientRequestSpec).system(contains("You are a trainer."));
     }

@@ -61,6 +61,7 @@ public class TrainerChatService {
 
         try {
             persistChatMessage(conversation, ChatMessage.Role.ASSISTANT, objectMapper.writeValueAsString(response));
+
         } catch (JsonProcessingException e) {
             log.error("Error serializing LlmResponse to JSON", e);
             throw new RuntimeException("Error saving chat response", e);

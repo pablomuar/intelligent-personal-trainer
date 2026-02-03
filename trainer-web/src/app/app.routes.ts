@@ -17,12 +17,8 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'generate',
+        redirectTo: 'chat',
         pathMatch: 'full'
-      },
-      {
-        path: 'generate',
-        loadComponent: () => import('./dashboard/pages/workout-generator/workout-generator.component')
       },
       {
         path: 'chat',

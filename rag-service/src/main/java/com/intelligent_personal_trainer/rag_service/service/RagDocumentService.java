@@ -1,4 +1,4 @@
-package com.intelligent_personal_trainer.trainer_service.llm.rag;
+package com.intelligent_personal_trainer.rag_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

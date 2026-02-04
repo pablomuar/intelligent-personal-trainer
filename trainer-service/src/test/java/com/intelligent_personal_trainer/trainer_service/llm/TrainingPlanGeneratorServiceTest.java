@@ -1,7 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
+import com.intelligent_personal_trainer.trainer_service.client.RagServiceClient;
 import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
-import com.intelligent_personal_trainer.trainer_service.llm.rag.RagDocumentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,6 +19,8 @@ import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +30,7 @@ class TrainingPlanGeneratorServiceTest {
     private ChatClient chatClient;
 
     @Mock
-    private RagDocumentService ragDocumentService;
+    private RagServiceClient ragServiceClient;
 
     @Mock
     private ChatClient.ChatClientRequestSpec chatClientRequestSpec;
@@ -63,7 +65,7 @@ class TrainingPlanGeneratorServiceTest {
         systemCaptor.getValue().accept(systemSpec);
         verify(systemSpec).text("Basic System Prompt");
 
-        verify(ragDocumentService, never()).performSearch(anyString());
+        verify(ragServiceClient, never()).search(anyString());
     }
 
     @Test
@@ -71,7 +73,7 @@ class TrainingPlanGeneratorServiceTest {
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
 
-        when(ragDocumentService.performSearch(anyString())).thenReturn(Collections.emptyList());
+        when(ragServiceClient.search(anyString())).thenReturn(Collections.emptyList());
 
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
@@ -81,7 +83,7 @@ class TrainingPlanGeneratorServiceTest {
 
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        verify(ragDocumentService).performSearch(anyString());
+        verify(ragServiceClient).search(anyString());
         verify(chatClientRequestSpec).user("My Prompt");
 
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);
@@ -96,7 +98,7 @@ class TrainingPlanGeneratorServiceTest {
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
 
         Document doc = new Document("Doc Content", Map.of("source", "wiki"));
-        when(ragDocumentService.performSearch(anyString())).thenReturn(List.of(doc));
+        when(ragServiceClient.search(anyString())).thenReturn(List.of(doc));
 
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);
         when(chatClientRequestSpec.system(any(Consumer.class))).thenReturn(chatClientRequestSpec);
@@ -106,7 +108,7 @@ class TrainingPlanGeneratorServiceTest {
 
         trainingPlanGeneratorService.generateTrainingPlan("My Prompt", List.of("flu"));
 
-        verify(ragDocumentService).performSearch(anyString());
+        verify(ragServiceClient).search(anyString());
         verify(chatClientRequestSpec).user("My Prompt");
 
         ArgumentCaptor<Consumer<ChatClient.PromptSystemSpec>> systemCaptor = ArgumentCaptor.forClass(Consumer.class);

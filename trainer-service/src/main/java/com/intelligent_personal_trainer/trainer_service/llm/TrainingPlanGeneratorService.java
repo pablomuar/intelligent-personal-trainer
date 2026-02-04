@@ -1,7 +1,7 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
+import com.intelligent_personal_trainer.trainer_service.client.RagServiceClient;
 import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
-import com.intelligent_personal_trainer.trainer_service.llm.rag.RagDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -20,7 +20,7 @@ public class TrainingPlanGeneratorService {
 
     private final ChatClient chatClient;
 
-    private final RagDocumentService ragDocumentService;
+    private final RagServiceClient ragServiceClient;
 
     @Value("${llm.plan-generator.system-prompt}")
     private String basicSystemPrompt;
@@ -61,7 +61,7 @@ public class TrainingPlanGeneratorService {
         log.info("Retrieving RAG context for conditions: {}", diseases);
 
         List<Document> uniqueDocs = diseases.stream()
-                .map(ragDocumentService::performSearch)
+                .map(ragServiceClient::search)
                 .flatMap(List::stream)
                 .distinct()
                 .toList();

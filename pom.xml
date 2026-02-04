@@ -25,6 +25,7 @@
         <module>user-service</module>
         <module>trainer-web</module>
         <module>api-gateway</module>
+        <module>rag-service</module>
     </modules>
 
     <dependencyManagement>

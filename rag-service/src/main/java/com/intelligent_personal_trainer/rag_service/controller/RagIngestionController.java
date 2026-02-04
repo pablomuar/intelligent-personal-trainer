@@ -1,6 +1,6 @@
-package com.intelligent_personal_trainer.trainer_service.api;
+package com.intelligent_personal_trainer.rag_service.controller;
 
-import com.intelligent_personal_trainer.trainer_service.llm.rag.DocumentIngestionService;
+import com.intelligent_personal_trainer.rag_service.service.DocumentIngestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

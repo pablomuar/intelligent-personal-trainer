@@ -1,6 +1,6 @@
 package com.intelligent_personal_trainer.trainer_service.client;
 
-import org.springframework.ai.document.Document;
+import com.intelligent_personal_trainer.common.dto.RagDocumentResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,5 +11,5 @@ import java.util.List;
 public interface RagServiceClient {
 
     @GetMapping("/rag/search")
-    List<Document> search(@RequestParam("query") String query);
+    List<RagDocumentResponse> search(@RequestParam("query") String query);
 }

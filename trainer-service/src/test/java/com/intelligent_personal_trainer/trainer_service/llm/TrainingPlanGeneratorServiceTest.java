@@ -1,5 +1,6 @@
 package com.intelligent_personal_trainer.trainer_service.llm;
 
+import com.intelligent_personal_trainer.common.dto.RagDocumentResponse;
 import com.intelligent_personal_trainer.trainer_service.client.RagServiceClient;
 import com.intelligent_personal_trainer.trainer_service.llm.dto.TrainingPlanLlmResponse;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.document.Document;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
@@ -97,7 +97,7 @@ class TrainingPlanGeneratorServiceTest {
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "basicSystemPrompt", "Basic System Prompt");
         ReflectionTestUtils.setField(trainingPlanGeneratorService, "ragSystemPrompt", "RAG System Prompt");
 
-        Document doc = new Document("Doc Content", Map.of("source", "wiki"));
+        RagDocumentResponse doc = new RagDocumentResponse("Doc Content", Map.of("source", "wiki"));
         when(ragServiceClient.search(anyString())).thenReturn(List.of(doc));
 
         when(chatClient.prompt()).thenReturn(chatClientRequestSpec);

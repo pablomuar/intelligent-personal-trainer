@@ -1,5 +1,6 @@
 package com.intelligent_personal_trainer.rag_service.controller;
 
+import com.intelligent_personal_trainer.common.dto.RagDocumentResponse;
 import com.intelligent_personal_trainer.rag_service.service.RagDocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.document.Document;
@@ -18,7 +19,16 @@ public class RagSearchController {
     private final RagDocumentService ragDocumentService;
 
     @GetMapping("/search")
-    public List<Document> search(@RequestParam("query") String query) {
-        return ragDocumentService.performSearch(query);
+    public List<RagDocumentResponse> search(@RequestParam("query") String query) {
+        return ragDocumentService.performSearch(query).stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    private RagDocumentResponse toDto(Document document) {
+        return RagDocumentResponse.builder()
+                .content(document.getText())
+                .metadata(document.getMetadata())
+                .build();
     }
 }

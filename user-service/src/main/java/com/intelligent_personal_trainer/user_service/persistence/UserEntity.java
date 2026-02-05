@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -36,6 +37,7 @@ public class UserEntity {
     private Integer age;
 
     private Integer height;
+
     private Integer weight;
 
     @Column(nullable = false)
@@ -52,4 +54,7 @@ public class UserEntity {
     @CollectionTable(name = "user_diseases", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "disease")
     private List<String> diseases;
+
+    @Column(name = "last_sync_date")
+    private LocalDate lastSyncDate;
 }

@@ -1,8 +1,10 @@
+
 -- Vector extension
 
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS hstore;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 
 -- FITNESS DATA
 
@@ -35,7 +37,8 @@ CREATE TABLE IF NOT EXISTS user_data (
                                          gender VARCHAR(50),
                                          lifestyle VARCHAR(50),
                                          data_source_id VARCHAR(255),
-                                         external_source_user_id VARCHAR(255)
+                                         external_source_user_id VARCHAR(255),
+                                         last_sync_date TIMESTAMP WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS user_diseases (

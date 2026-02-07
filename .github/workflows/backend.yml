@@ -65,6 +65,6 @@ jobs:
             -pl api-gateway,user-service,trainer-service,data-processor-service,data-persistence-service \
             -am \
             -Dimage.registry=ghcr.io \
-            -Dimage.ns=${{ github.repository_owner }} \
+            -Dimage.user=${{ github.repository_owner }} \
             -Djib.to.auth.username=${{ github.actor }} \
             -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}

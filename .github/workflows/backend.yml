@@ -62,6 +62,9 @@ jobs:
       - name: Build and Push Images
         run: |
           mvn compile jib:build \
-            -Dimage.tag=${{ github.sha }} \
-            -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }} \
-            -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
+            -pl api-gateway,user-service,trainer-service,data-processor-service,data-persistence-service \
+            -am \
+            -Dimage.registry=ghcr.io \
+            -Dimage.ns=${{ github.repository_owner }} \
+            -Djib.to.auth.username=${{ github.actor }} \
+            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}

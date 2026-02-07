@@ -10,7 +10,7 @@ on:
       - "trainer-web/**"
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ghcr.io/pablomuar
   IMAGE_NAME: trainer-web
 
 jobs:

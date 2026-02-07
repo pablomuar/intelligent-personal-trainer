@@ -61,7 +61,15 @@ jobs:
 
       - name: Build and Push Images
         run: |
-          mvn compile jib:build \
-            -Dimage.tag=${{ github.sha }} \
-            -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }} \
-            -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }}
+          services="api-gateway user-service trainer-service data-processor-service data-persistence-service"
+          # Bucle para construir y subir uno por uno
+          for service in $services; do
+            echo "🚀 Construyendo y subiendo: $service"
+
+            mvn compile jib:build \
+              -pl $service \
+              -am \
+              -Djib.to.image=ghcr.io/${{ github.repository_owner }}/intelligent-personal-trainer/$service:latest \
+              -Djib.to.auth.username=${{ github.actor }} \
+              -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+          done

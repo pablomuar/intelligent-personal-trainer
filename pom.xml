@@ -25,6 +25,7 @@
         <module>user-service</module>
         <module>trainer-web</module>
         <module>api-gateway</module>
+        <module>service-discovery</module>
     </modules>
 
     <dependencyManagement>

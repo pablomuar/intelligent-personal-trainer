@@ -73,7 +73,7 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <configuration>
                     <to>
-                        <image>ghcr.io/pablomuar/${project.artifactId}</image>
+                        <image>${docker.image.prefix}/${project.artifactId}</image>
                         <tags>
                             <tag>latest</tag>
                         </tags>

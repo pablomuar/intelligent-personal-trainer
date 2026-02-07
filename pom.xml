@@ -16,9 +16,6 @@
         <springdoc.version>2.8.14</springdoc.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <docker.registry>ghcr.io</docker.registry>
-        <docker.user>pablomuar</docker.user>
-        <docker.repo>intelligent-personal-trainer</docker.repo>
     </properties>
 
     <modules>
@@ -98,7 +95,7 @@
                             <image>eclipse-temurin:21-jre-alpine</image>
                         </from>
                         <to>
-                            <image>${docker.registry}/${docker.user}/${docker.repo}/${project.artifactId}</image>
+                            <image>ghcr.io/pablomuar/${project.artifactId}</image>
                             <tags>
                                 <tag>latest</tag>
                             </tags>

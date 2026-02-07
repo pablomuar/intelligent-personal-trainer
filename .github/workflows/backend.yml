@@ -2,9 +2,12 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
+    paths-ignore:
+      - "trainer-web/**"
   pull_request:
-    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - "trainer-web/**"
 
 jobs:
   test:

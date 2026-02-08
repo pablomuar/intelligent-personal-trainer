@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "persistence-service")
+@FeignClient(name = "data-persistence-service")
 public interface DataPersistenceServiceClient {
 
     @GetMapping("/data-persistence/fitness-data/{userId}")

@@ -5,6 +5,8 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
 
 spring:
   application:
@@ -33,6 +35,6 @@ spring:
               predicates:
                 - Path=/data-processor/**
             - id: data-persistence-service
-              uri: lb://persistence-service
+              uri: lb://data-persistence-service
               predicates:
                 - Path=/data-persistence/**

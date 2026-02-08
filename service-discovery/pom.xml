@@ -10,20 +10,16 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>api-gateway</artifactId>
+    <artifactId>service-discovery</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
         </dependency>
     </dependencies>
 
@@ -33,19 +29,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <configuration>
-                    <to>
-                        <image>${docker.image.prefix}/${project.artifactId}</image>
-                        <tags>
-                            <tag>latest</tag>
-                        </tags>
-                    </to>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+
 </project>

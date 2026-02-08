@@ -1,13 +1,13 @@
 package com.intelligent_personal_trainer.user_service.data_scheduler;
 
+import com.intelligent_personal_trainer.user_service.client.DataProcessorClient;
+import com.intelligent_personal_trainer.user_service.client.dto.ProcessorTriggerRequest;
 import com.intelligent_personal_trainer.user_service.persistence.UserEntity;
 import com.intelligent_personal_trainer.user_service.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,10 +18,7 @@ import java.util.List;
 public class DailyIngestionScheduler {
 
     private final UserRepository userRepository;
-    private final RestClient.Builder restClientBuilder;
-
-    @Value("${services.data-processor.url}")
-    private String dataProcessorUrl;
+    private final DataProcessorClient dataProcessorClient;
 
     @Scheduled(cron = "${scheduler.daily-ingestion.cron:0 0 1 * * ?}")
     public void triggerDailyDataIngestion() {
@@ -31,8 +28,6 @@ public class DailyIngestionScheduler {
         List<UserEntity> eligibleUsers = userRepository.findByDataSourceIdIsNotNullAndExternalSourceUserIdIsNotNull();
 
         log.info("Found {} users eligible for data update", eligibleUsers.size());
-
-        RestClient restClient = restClientBuilder.baseUrl(dataProcessorUrl).build();
 
         for (UserEntity user : eligibleUsers) {
             try {
@@ -53,11 +48,7 @@ public class DailyIngestionScheduler {
                         yesterday
                 );
 
-                restClient.post()
-                        .uri("/data-processor/trigger")
-                        .body(request)
-                        .retrieve()
-                        .toBodilessEntity();
+                dataProcessorClient.triggerIngestion(request);
 
                 user.setLastSyncDate(yesterday);
                 userRepository.save(user);
@@ -71,12 +62,4 @@ public class DailyIngestionScheduler {
 
         log.info("Daily data ingestion job finished");
     }
-
-    private record ProcessorTriggerRequest(
-            String userId,
-            String externalSourceUserId,
-            String sourceId,
-            LocalDate date,
-            LocalDate dateTo
-    ) {}
 }

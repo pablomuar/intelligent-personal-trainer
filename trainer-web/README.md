@@ -9,8 +9,7 @@ The Trainer Web application is the user interface for the Intelligent Personal T
     *   Built with **Angular 18+** using Standalone Components for modularity and performance.
     *   Styled with **Tailwind CSS** for a clean, responsive design.
 *   **User Dashboard:**
-    *   **Agentic Chat:** An interactive chat interface to converse with the AI Personal Trainer.
-    *   **Workout Generator:** A tool to request and view personalized workout plans.
+    *   **Agentic Chat:** The central hub for all interactions. Converse with the AI Personal Trainer to ask questions, receive advice, and generate personalized workout plans.
     *   **Workout History:** A visualization of past activities with dynamic attribute tooltips.
     *   **Log Workout:** A form to manually record new fitness activities.
 *   **User Management:**

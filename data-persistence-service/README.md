@@ -11,5 +11,6 @@ The Data Persistence Service manages the long-term storage and retrieval of user
     *   Utilizes **TimescaleDB** (based on PostgreSQL) to optimize the storage and querying of time-stamped fitness activities.
 *   **Data Access API:**
     *   Provides REST endpoints to retrieve historical fitness data for a specific user within a given date range.
+*   **Service Discovery:** Automatically registers with the **Eureka Server** for dynamic discovery.
 *   **MCP Tool Integration:**
     *   **`getFitnessData`:** Exposes a Model Context Protocol (MCP) tool. This allows the AI Trainer to programmatically query a user's workout history (filtering by date) to generate context-aware advice and plans.

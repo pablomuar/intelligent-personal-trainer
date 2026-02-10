@@ -5,10 +5,11 @@ The API Gateway serves as the single entry point for the Intelligent Personal Tr
 
 ## Key Features
 
-*   **Centralized Routing:** Powered by Spring Cloud Gateway, it dynamically routes traffic based on path predicates.
-    *   `/users/**` -> **User Service**
-    *   `/trainer/**` -> **Trainer Service**
-    *   `/data-processor/**` -> **Data Processor Service**
-    *   `/data-persistence/**` -> **Data Persistence Service**
+*   **Service Discovery Integration:** Integrated with **Netflix Eureka** to dynamically discover service locations.
+*   **Centralized Routing:** Powered by **Spring Cloud Gateway**, it routes traffic based on path predicates using load-balanced service IDs (`lb://`):
+    *   `/users/**` -> `lb://user-service`
+    *   `/trainer/**` -> `lb://trainer-service`
+    *   `/data-processor/**` -> `lb://data-processor-service`
+    *   `/data-persistence/**` -> `lb://data-persistence-service`
 *   **CORS Configuration:** Configured to support Cross-Origin Resource Sharing, allowing the frontend application (running on localhost) to communicate securely with backend services.
-*   **Protocol:** Handles HTTP traffic forwarding.
+*   **Port:** Runs on port `9000` by default.

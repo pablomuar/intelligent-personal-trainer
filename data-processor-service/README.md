@@ -12,4 +12,5 @@ The Data Processor Service is responsible for the ingestion, normalization, and 
     *   Uses an Adapter pattern (`FitnessDataReader`) to standardize incoming data from various formats into the canonical `FitnessData` structure.
 *   **Event Publishing:**
     *   **Kafka Producer:** Publishes normalized fitness records to a Kafka topic. This decouples data ingestion from storage and analysis, allowing for asynchronous processing.
+*   **Service Discovery:** Automatically registers with the **Eureka Server** for dynamic discovery.
 *   **Asynchronous Processing:** Configured to handle data loads efficiently without blocking the ingestion API.

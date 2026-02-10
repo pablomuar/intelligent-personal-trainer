@@ -6,11 +6,12 @@ The **Intelligent Personal Trainer** is a comprehensive microservices-based plat
 
 ## Architecture
 
-The system is composed of several specialized microservices, all accessible through a central API Gateway.
+The system is composed of several specialized microservices, all accessible through a central API Gateway and coordinated via Service Discovery.
 
 | Service | Description                                                           | Link |
 | :--- |:----------------------------------------------------------------------| :--- |
-| **API Gateway** | Central entry point and router for the system.                        | [README](api-gateway/README.md) |
+| **Service Discovery** | Eureka Server for dynamic service registration and discovery. | [README](service-discovery/README.md) |
+| **API Gateway** | Central entry point and router. Uses Eureka for dynamic routing. | [README](api-gateway/README.md) |
 | **Trainer Web** | Angular-based frontend dashboard and user interface.                  | [README](trainer-web/README.md) |
 | **Trainer Service** | The AI core. Uses Gemini, MCP and RAG to generate plans and chat.     | [README](trainer-service/README.md) |
 | **User Service** | Manages user identities, authentication, and physical profiles.       | [README](user-service/README.md) |
@@ -22,4 +23,4 @@ The system is composed of several specialized microservices, all accessible thro
 
 *   **Agentic AI:** The Trainer Service acts as an autonomous agent using the Model Context Protocol (MCP) to "call" other services (like User and Persistence) to gather information before answering user queries.
 *   **Event-Driven:** Data flows asynchronously from ingestion (Processor) to storage (Persistence) via Kafka.
-*   **RAG (Retrieval-Augmented Generation):** The AI has access to a vector database of fitness knowledge to ensure its advice is scientifically sound.
+*   **RAG (Retrieval-Augmented Generation):** The AI has access to a vector database of fitness knowledge (integrated within the Trainer Service) to ensure its advice is scientifically sound.

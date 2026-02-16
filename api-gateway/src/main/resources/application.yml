@@ -26,21 +26,57 @@ spring:
               uri: lb://user-service
               predicates:
                 - Path=/users/**
+
             - id: trainer-service
               uri: lb://trainer-service
               predicates:
                 - Path=/trainer/**
+
             - id: data-processor-service
               uri: lb://data-processor-service
               predicates:
                 - Path=/data-processor/**
+
             - id: data-persistence-service
               uri: lb://data-persistence-service
               predicates:
                 - Path=/data-persistence/**
 
-swagger-ui:
-  urls:
+            # OpenAPI routes
+            - id: openapi-user
+              uri: lb://user-service
+              predicates:
+                - Path=/user-service/v3/api-docs/**
+              filters:
+                - RewritePath=/user-service/(?<path>.*), /$\{path}
+
+            - id: openapi-trainer
+              uri: lb://trainer-service
+              predicates:
+                - Path=/trainer-service/v3/api-docs/**
+              filters:
+                - RewritePath=/trainer-service/(?<path>.*), /$\{path}
+
+            - id: openapi-data-persistence
+              uri: lb://data-persistence-service
+              predicates:
+                - Path=/data-persistence-service/v3/api-docs/**
+              filters:
+                - RewritePath=/data-persistence-service/(?<path>.*), /$\{path}
+
+            - id: openapi-data-processor
+              uri: lb://data-processor-service
+              predicates:
+                - Path=/data-processor-service/v3/api-docs/**
+              filters:
+                - RewritePath=/data-processor-service/(?<path>.*), /$\{path}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    urls:
     - name: User Service
       url: /user-service/v3/api-docs
     - name: Data Persistence Service
@@ -49,5 +85,3 @@ swagger-ui:
       url: /data-processor-service/v3/api-docs
     - name: Trainer Service
       url: /trainer-service/v3/api-docs
-  api-docs:
-    enabled: true

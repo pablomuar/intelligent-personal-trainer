@@ -1,8 +1,7 @@
 [
   {
     "sourceId": "DATASET_KAGGLE_V1",
-    "filePath": "/data/Fitness_Health_Tracking_Dataset_with_Missing_Values.csv",
-    "timeZone": "Europe/Madrid",
+    "filePath": "/app/data/Fitness_Health_Tracking_Dataset_with_Missing_Values.csv",
     "dateFormat": "yyyy-MM-dd HH:mm:ss",
     "mappings": {
       "userId": "User_ID",
@@ -15,9 +14,22 @@
     }
   },
   {
-    "sourceId": "PM_DATA",
-    "filePath": "/data/PMData.csv",
-    "timeZone": "Europe/Madrid",
+    "sourceId": "PM_DATA_2026",
+    "filePath": "/app/data/PMData_2026.csv",
+    "dateFormat": "yyyy-MM-dd",
+    "mappings": {
+      "userId": "participant_id",
+      "timestamp": "date",
+      "totalSteps": "steps",
+      "totalCaloriesBurned": "calories_daily",
+      "totalDistance": "distance",
+      "averageHeartRate": "heart_rate_bpm",
+      "workoutDataList": "workouts_json"
+    }
+  },
+  {
+    "sourceId": "SAMSUNG_HEALTH",
+    "filePath": "/app/data/SamsungHealth.csv",
     "dateFormat": "yyyy-MM-dd",
     "mappings": {
       "userId": "participant_id",

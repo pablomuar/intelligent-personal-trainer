@@ -2,12 +2,13 @@ package com.intelligent_personal_trainer.data_processor_service.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -16,19 +17,20 @@ import java.util.stream.Collectors;
 @Configuration
 public class DataSourceConfiguration {
 
+    @Value("${datasource.sources-path}")
+    private String sourcesPath;
+
     @Bean
-    public Map<String, SourceConfig> sourceConfigs() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+    public Map<String, SourceConfig> sourceConfigs(ObjectMapper objectMapper) throws IOException {
+        Resource resource = new FileSystemResource(sourcesPath);
 
-        ClassPathResource resource = new ClassPathResource("sources.json");
-        try (InputStream inputStream = resource.getInputStream()) {
-            List<SourceConfig> configs = mapper.readValue(
-                    inputStream,
-                    new TypeReference<>() {}
-            );
+        List<SourceConfig> configs = objectMapper.readValue(
+                resource.getInputStream(),
+                new TypeReference<>() {
+                }
+        );
 
-            return configs.stream()
-                    .collect(Collectors.toMap(SourceConfig::sourceId, Function.identity()));
-        }
+        return configs.stream()
+                .collect(Collectors.toMap(SourceConfig::sourceId, Function.identity()));
     }
 }

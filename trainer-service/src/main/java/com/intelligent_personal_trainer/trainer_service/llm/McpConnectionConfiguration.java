@@ -24,7 +24,7 @@ public class McpConnectionConfiguration {
     @Value("${mcp.connection.customizer.services}")
     private List<String> servicesToCustomize;
 
-    @Value("${GOOGLE_MAPS_API_KEY}")
+    @Value("${mcp.connection.customizer.google-maps-api-key}")
     private String googleMapsApiKey;
 
     @Bean

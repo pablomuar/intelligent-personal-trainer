@@ -38,3 +38,16 @@ spring:
               uri: lb://data-persistence-service
               predicates:
                 - Path=/data-persistence/**
+
+swagger-ui:
+  urls:
+    - name: User Service
+      url: /user-service/v3/api-docs
+    - name: Data Persistence Service
+      url: /data-persistence-service/v3/api-docs
+    - name: Data Processor Service
+      url: /data-processor-service/v3/api-docs
+    - name: Trainer Service
+      url: /trainer-service/v3/api-docs
+  api-docs:
+    enabled: true

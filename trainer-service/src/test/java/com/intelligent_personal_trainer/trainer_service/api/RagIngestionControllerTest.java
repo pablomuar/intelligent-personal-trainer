@@ -27,7 +27,7 @@ class RagIngestionControllerTest {
     void testIngestDocument_Success() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "content".getBytes());
 
-        mockMvc.perform(multipart("/rag/ingest").file(file))
+        mockMvc.perform(multipart("/trainer/rag/ingest").file(file))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Ingestion process started in background for: test.txt"));
 
@@ -38,7 +38,7 @@ class RagIngestionControllerTest {
     void testIngestDocument_EmptyFile() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "empty.txt", "text/plain", "".getBytes());
 
-        mockMvc.perform(multipart("/rag/ingest").file(file))
+        mockMvc.perform(multipart("/trainer/rag/ingest").file(file))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("The file is empty"));
     }

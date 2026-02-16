@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/rag")
+@RequestMapping("/trainer/rag")
 @RequiredArgsConstructor
 public class RagIngestionController {
 

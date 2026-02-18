@@ -12,6 +12,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
@@ -54,6 +55,7 @@ services:
     container_name: service-discovery
     ports:
       - "8761:8761"
+    restart: unless-stopped
 
   api-gateway:
     image: ${DOCKER_IMAGE_PREFIX}/api-gateway:latest
@@ -64,6 +66,7 @@ services:
       - service-discovery
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    restart: unless-stopped
 
   user-service:
     image: ${DOCKER_IMAGE_PREFIX}/user-service:latest
@@ -77,7 +80,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
-      - SCHEDULER_DAILY-INGESTION_CRON=0 50 18 * * *
+    restart: unless-stopped
 
   data-processor-service:
     image: ${DOCKER_IMAGE_PREFIX}/data-processor-service:latest
@@ -90,6 +93,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
     volumes:
       - ./data:/app/data
+    restart: unless-stopped
 
   data-persistence-service:
     image: ${DOCKER_IMAGE_PREFIX}/data-persistence-service:latest
@@ -105,6 +109,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    restart: unless-stopped
 
   trainer-service:
     image: ${DOCKER_IMAGE_PREFIX}/trainer-service:latest
@@ -130,6 +135,7 @@ services:
       - "4200:80"
     depends_on:
       - api-gateway
+    restart: unless-stopped
 
 volumes:
   db_data:

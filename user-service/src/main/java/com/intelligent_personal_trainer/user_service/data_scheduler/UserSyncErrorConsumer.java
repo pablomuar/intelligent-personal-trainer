@@ -31,11 +31,16 @@ public class UserSyncErrorConsumer {
             // Set lastSyncDate to the day BEFORE the failed date so it gets picked up by scheduler again
             LocalDate newLastSyncDate = failedDate.minusDays(1);
 
-            user.setLastSyncDate(newLastSyncDate);
-            userRepository.save(user);
+            if (user.getLastSyncDate() == null || newLastSyncDate.isBefore(user.getLastSyncDate())) {
+                user.setLastSyncDate(newLastSyncDate);
+                userRepository.save(user);
 
-            log.info("Rolled back lastSyncDate for user {} to {} due to processing failure on {}",
-                    user.getUserId(), newLastSyncDate, failedDate);
+                log.info("Rolled back lastSyncDate for user {} to {} due to processing failure on {}",
+                        user.getUserId(), newLastSyncDate, failedDate);
+            } else {
+                log.debug("Ignored rollback for user {} to {} because current lastSyncDate is {} (failure on {})",
+                        user.getUserId(), newLastSyncDate, user.getLastSyncDate(), failedDate);
+            }
         } else {
             log.error("Received error for non-existent user: {}", error.getUserId());
         }

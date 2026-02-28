@@ -2,6 +2,7 @@ package com.intelligent_personal_trainer.data_processor_service;
 
 import com.intelligent_personal_trainer.common.constants.KafkaConstants;
 import com.intelligent_personal_trainer.common.data.FitnessData;
+import com.intelligent_personal_trainer.common.data.FitnessDataProcessingError;
 import com.intelligent_personal_trainer.data_processor_service.data_reader.FitnessDataReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,13 +17,14 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DataProducerServiceTest {
 
     @Mock
-    private KafkaTemplate<String, FitnessData> kafkaTemplate;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Mock
     private List<FitnessDataReader> dataReaderList;
@@ -69,7 +71,8 @@ class DataProducerServiceTest {
 
         service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
-        verify(kafkaTemplate, never()).send(any(), any(), any());
+        verify(kafkaTemplate, never()).send(eq(KafkaConstants.FITNESS_DATA_TOPIC), any(), any());
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
         verify(fitnessDataReader, never()).readData(any(), any(), any(), any());
     }
 
@@ -88,7 +91,8 @@ class DataProducerServiceTest {
 
         service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
-        verify(kafkaTemplate, never()).send(any(), any(), any());
+        verify(kafkaTemplate, never()).send(eq(KafkaConstants.FITNESS_DATA_TOPIC), any(), any());
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
         verify(fitnessDataReader, never()).readData(any(), any(), any(), any());
     }
 
@@ -106,6 +110,25 @@ class DataProducerServiceTest {
 
         service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
-        verify(kafkaTemplate, never()).send(any(), any(), any());
+        verify(kafkaTemplate, never()).send(eq(KafkaConstants.FITNESS_DATA_TOPIC), any(), any());
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
+    }
+
+    @Test
+    void processAndSendData_shouldSendErrorToKafka_whenExceptionOccurs() {
+        String userId = "testUser";
+        String externalSourceUserId = "extUser";
+        String sourceId = "testSource";
+        LocalDate date = LocalDate.now();
+        String errorMessage = "Processing failed";
+
+        DataProducerService service = new DataProducerService(kafkaTemplate, List.of(fitnessDataReader));
+
+        when(fitnessDataReader.supportsSource(sourceId)).thenReturn(true);
+        when(fitnessDataReader.readData(sourceId, userId, externalSourceUserId, date)).thenThrow(new RuntimeException(errorMessage));
+
+        service.processAndSendData(sourceId, userId, externalSourceUserId, date);
+
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
     }
 }

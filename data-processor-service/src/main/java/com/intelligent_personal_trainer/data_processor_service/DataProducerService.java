@@ -32,15 +32,19 @@ public class DataProducerService {
 
 
             if (fitnessDataReaders.size() != 1) {
-                log.warn(fitnessDataReaders.isEmpty()
-                        ? "No fitness data reader found for sourceId: {}"
-                        : "Multiple fitness data readers found for sourceId: {}", sourceId);
+                String errorMsg = fitnessDataReaders.isEmpty()
+                        ? "No fitness data reader found for sourceId: " + sourceId
+                        : "Multiple fitness data readers found for sourceId: " + sourceId;
+                log.warn(errorMsg);
+                sendError(userId, date, sourceId, errorMsg);
                 return;
             }
 
             List<FitnessData> dataList = fitnessDataReaders.getFirst().readData(sourceId, userId, externalSourceUserId, date);
             if (dataList.isEmpty()) {
-                log.warn("No data found for User: {} (External: {}) on Date: {} from Source: {}", userId, externalSourceUserId, date, sourceId);
+                String errorMsg = String.format("No data found for User: %s (External: %s) on Date: %s from Source: %s", userId, externalSourceUserId, date, sourceId);
+                log.warn(errorMsg);
+                sendError(userId, date, sourceId, errorMsg);
                 return;
             }
 
@@ -52,13 +56,17 @@ public class DataProducerService {
             log.info("Successfully sent {} records to Kafka.", dataList.size());
         } catch (Exception e) {
             log.error("Error processing data for User: {}, Date: {}, Source: {}. Error: {}", userId, date, sourceId, e.getMessage(), e);
-            FitnessDataProcessingError error = FitnessDataProcessingError.builder()
-                    .userId(userId)
-                    .failedDate(date)
-                    .sourceId(sourceId)
-                    .errorMessage(e.getMessage())
-                    .build();
-            kafkaTemplate.send(KafkaConstants.FITNESS_DATA_ERROR_TOPIC, userId, error);
+            sendError(userId, date, sourceId, e.getMessage());
         }
+    }
+
+    private void sendError(String userId, LocalDate date, String sourceId, String errorMessage) {
+        FitnessDataProcessingError error = FitnessDataProcessingError.builder()
+                .userId(userId)
+                .failedDate(date)
+                .sourceId(sourceId)
+                .errorMessage(errorMessage)
+                .build();
+        kafkaTemplate.send(KafkaConstants.FITNESS_DATA_ERROR_TOPIC, userId, error);
     }
 }

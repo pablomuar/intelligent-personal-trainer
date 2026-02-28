@@ -71,7 +71,8 @@ class DataProducerServiceTest {
 
         service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
-        verify(kafkaTemplate, never()).send(any(), any(), any());
+        verify(kafkaTemplate, never()).send(eq(KafkaConstants.FITNESS_DATA_TOPIC), any(), any());
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
         verify(fitnessDataReader, never()).readData(any(), any(), any(), any());
     }
 
@@ -90,7 +91,8 @@ class DataProducerServiceTest {
 
         service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
-        verify(kafkaTemplate, never()).send(any(), any(), any());
+        verify(kafkaTemplate, never()).send(eq(KafkaConstants.FITNESS_DATA_TOPIC), any(), any());
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
         verify(fitnessDataReader, never()).readData(any(), any(), any(), any());
     }
 
@@ -108,7 +110,8 @@ class DataProducerServiceTest {
 
         service.processAndSendData(sourceId, userId, externalSourceUserId, date);
 
-        verify(kafkaTemplate, never()).send(any(), any(), any());
+        verify(kafkaTemplate, never()).send(eq(KafkaConstants.FITNESS_DATA_TOPIC), any(), any());
+        verify(kafkaTemplate).send(eq(KafkaConstants.FITNESS_DATA_ERROR_TOPIC), eq(userId), any(FitnessDataProcessingError.class));
     }
 
     @Test

@@ -3,6 +3,7 @@
 *.iml
 **/target/
 /.env
+*.log
 /trainer-web/node/node_modules/corepack/dist/lib/corepack.cjs
 /trainer-web/node/node_modules/corepack/dist/corepack.js
 /trainer-web/node/node_modules/corepack/dist/npm.js

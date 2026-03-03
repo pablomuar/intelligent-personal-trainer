@@ -8,10 +8,11 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: echo srvr | nc zookeeper 2181 || exit 1
-      interval: 10s
-      retries: 3
-      start_period: 10s
+      test: [ "CMD", "nc", "-vz", "localhost", "2181" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
@@ -28,6 +29,12 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
 
   timescaledb:
     image: timescale/timescaledb-ha:pg15
@@ -41,6 +48,93 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  service-discovery:
+    image: ${DOCKER_IMAGE_PREFIX}/service-discovery:latest
+    container_name: service-discovery
+    ports:
+      - "8761:8761"
+    restart: unless-stopped
+
+  api-gateway:
+    image: ${DOCKER_IMAGE_PREFIX}/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      - service-discovery
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    restart: unless-stopped
+
+  user-service:
+    image: ${DOCKER_IMAGE_PREFIX}/user-service:latest
+    container_name: user-service
+    depends_on:
+      - timescaledb
+      - service-discovery
+    environment:
+      - SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT=60000
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://timescaledb:5432/intelligent_personal_trainer
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    restart: unless-stopped
+
+  data-processor-service:
+    image: ${DOCKER_IMAGE_PREFIX}/data-processor-service:latest
+    container_name: data-processor-service
+    depends_on:
+      - kafka
+      - service-discovery
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  data-persistence-service:
+    image: ${DOCKER_IMAGE_PREFIX}/data-persistence-service:latest
+    container_name: data-persistence-service
+    depends_on:
+      - kafka
+      - timescaledb
+      - service-discovery
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT=60000
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://timescaledb:5432/intelligent_personal_trainer
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+    restart: unless-stopped
+
+  trainer-service:
+    image: ${DOCKER_IMAGE_PREFIX}/trainer-service:latest
+    container_name: trainer-service
+    depends_on:
+      - timescaledb
+      - service-discovery
+    environment:
+      - SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT=60000
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://timescaledb:5432/intelligent_personal_trainer
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - SPRING_AI_GOOGLE_GENAI_API_KEY=${GEMINI_API_KEY}
+      - SPRING_AI_GOOGLE_GENAI_EMBEDDING_API_KEY=${GEMINI_API_KEY}
+      - MCP_CONNECTION_CUSTOMIZER_GOOGLE-MAPS-API-KEY=${GOOGLE_MAPS_API_KEY}
+    restart: unless-stopped
+
+  trainer-web:
+    image: ${DOCKER_IMAGE_PREFIX}/trainer-web:latest
+    container_name: trainer-web
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
     restart: unless-stopped
 
 volumes:

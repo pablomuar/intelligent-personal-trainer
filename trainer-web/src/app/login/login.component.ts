@@ -2,14 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+    selector: 'app-login',
+    imports: [ReactiveFormsModule, RouterModule],
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css']
 })
 export default class LoginComponent {
   private fb = inject(FormBuilder);

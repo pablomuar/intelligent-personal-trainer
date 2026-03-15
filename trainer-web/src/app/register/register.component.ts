@@ -2,15 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
-import { CommonModule } from '@angular/common';
+
 import { User } from '../core/auth/user.model';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+    selector: 'app-register',
+    imports: [ReactiveFormsModule],
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.css']
 })
 export default class RegisterComponent {
   private fb = inject(FormBuilder);

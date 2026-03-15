@@ -6,10 +6,9 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-workout-register',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './workout-register.component.html',
+    selector: 'app-workout-register',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './workout-register.component.html'
 })
 export default class WorkoutRegisterComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);

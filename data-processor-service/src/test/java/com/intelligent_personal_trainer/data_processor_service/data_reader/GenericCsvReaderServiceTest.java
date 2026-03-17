@@ -3,7 +3,8 @@ package com.intelligent_personal_trainer.data_processor_service.data_reader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import com.intelligent_personal_trainer.common.data.WorkoutData;
-import com.intelligent_personal_trainer.data_processor_service.configuration.SourceConfig;
+import com.intelligent_personal_trainer.data_processor_service.data_reader.csv.CsvSourceConfig;
+import com.intelligent_personal_trainer.data_processor_service.data_reader.csv.GenericCsvReaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -28,7 +29,7 @@ class GenericCsvReaderServiceTest {
     private GenericCsvReaderService service;
 
     @Mock
-    private Map<String, SourceConfig> sourceConfigs;
+    private Map<String, CsvSourceConfig> sourceConfigs;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -74,7 +75,7 @@ class GenericCsvReaderServiceTest {
             "workoutData.durationMinutes", "duration"
         );
 
-        SourceConfig config = new SourceConfig(sourceId, csvFile.getAbsolutePath(), dateFormat, mappings);
+        CsvSourceConfig config = new CsvSourceConfig(sourceId, csvFile.getAbsolutePath(), dateFormat, mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
@@ -116,7 +117,7 @@ class GenericCsvReaderServiceTest {
             "totalSteps", "steps"
         );
 
-        SourceConfig config = new SourceConfig(sourceId, csvFile.getAbsolutePath(), dateFormat, mappings);
+        CsvSourceConfig config = new CsvSourceConfig(sourceId, csvFile.getAbsolutePath(), dateFormat, mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
@@ -138,7 +139,7 @@ class GenericCsvReaderServiceTest {
     @Test
     void readData_FileNotFound() {
         String sourceId = "testSource";
-        SourceConfig config = new SourceConfig(sourceId, "non_existent_file.csv", "yyyy-MM-dd", Map.of());
+        CsvSourceConfig config = new CsvSourceConfig(sourceId, "non_existent_file.csv", "yyyy-MM-dd", Map.of());
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         List<FitnessData> result = service.readData(sourceId, "user", "extUser", LocalDate.now());
@@ -164,7 +165,7 @@ class GenericCsvReaderServiceTest {
             "timestamp", "ts"
         );
 
-        SourceConfig config = new SourceConfig(sourceId, csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
+        CsvSourceConfig config = new CsvSourceConfig(sourceId, csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         List<FitnessData> result = service.readData(sourceId, "sysUser", externalUserId, date);
@@ -190,7 +191,7 @@ class GenericCsvReaderServiceTest {
             "totalSteps", "steps"
         );
 
-        SourceConfig config = new SourceConfig(sourceId, csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
+        CsvSourceConfig config = new CsvSourceConfig(sourceId, csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);
@@ -217,7 +218,7 @@ class GenericCsvReaderServiceTest {
             "totalSteps", "steps"
         );
 
-        SourceConfig config = new SourceConfig(sourceId, csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
+        CsvSourceConfig config = new CsvSourceConfig(sourceId, csvFile.getAbsolutePath(), "yyyy-MM-dd HH:mm:ss", mappings);
         when(sourceConfigs.get(sourceId)).thenReturn(config);
 
         List<FitnessData> result = service.readData(sourceId, userId, externalUserId, date);

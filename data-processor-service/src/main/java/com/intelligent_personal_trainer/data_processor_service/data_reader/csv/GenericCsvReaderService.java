@@ -1,10 +1,10 @@
-package com.intelligent_personal_trainer.data_processor_service.data_reader;
+package com.intelligent_personal_trainer.data_processor_service.data_reader.csv;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intelligent_personal_trainer.common.data.FitnessData;
 import com.intelligent_personal_trainer.common.data.WorkoutData;
-import com.intelligent_personal_trainer.data_processor_service.configuration.SourceConfig;
+import com.intelligent_personal_trainer.data_processor_service.data_reader.FitnessDataReader;
 import com.opencsv.CSVReaderHeaderAware;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.*;
 public class GenericCsvReaderService implements FitnessDataReader {
     private final ObjectMapper objectMapper;
     private final SimpleTypeConverter typeConverter = new SimpleTypeConverter();
-    private final Map<String, SourceConfig> sourceConfigs;
+    private final Map<String, CsvSourceConfig> sourceConfigs;
 
     @Override
     public boolean supportsSource(String sourceId) {
@@ -36,7 +36,7 @@ public class GenericCsvReaderService implements FitnessDataReader {
 
     @Override
     public List<FitnessData> readData(String sourceId, String userId, String externalSourceUserId, LocalDate date) {
-        SourceConfig config = sourceConfigs.get(sourceId);
+        CsvSourceConfig config = sourceConfigs.get(sourceId);
         if (config == null) {
             return new ArrayList<>();
         }
@@ -73,7 +73,7 @@ public class GenericCsvReaderService implements FitnessDataReader {
         return results;
     }
 
-    private FitnessData mapRowToEntity(Map<String, String> row, SourceConfig config, LocalDateTime dateTime, String userId) {
+    private FitnessData mapRowToEntity(Map<String, String> row, CsvSourceConfig config, LocalDateTime dateTime, String userId) {
         FitnessData.FitnessDataBuilder builder = FitnessData.builder();
         builder.timestamp(dateTime.atZone(ZoneId.of("UTC")).toInstant());
         builder.userId(userId);

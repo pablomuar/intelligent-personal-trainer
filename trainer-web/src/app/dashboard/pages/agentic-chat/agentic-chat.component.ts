@@ -6,10 +6,9 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { TrainerService, Conversation, ChatMessage, LlmResponse } from '../../../core/trainer.service';
 
 @Component({
-  selector: 'app-agentic-chat',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MarkdownModule],
-  templateUrl: './agentic-chat.component.html',
+    selector: 'app-agentic-chat',
+    imports: [CommonModule, ReactiveFormsModule, MarkdownModule],
+    templateUrl: './agentic-chat.component.html'
 })
 export default class AgenticChatComponent implements OnInit, AfterViewChecked {
   authService = inject(AuthService);

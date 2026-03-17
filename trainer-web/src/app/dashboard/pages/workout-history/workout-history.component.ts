@@ -12,10 +12,9 @@ interface TooltipData {
 }
 
 @Component({
-  selector: 'app-workout-history',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './workout-history.component.html',
+    selector: 'app-workout-history',
+    imports: [CommonModule],
+    templateUrl: './workout-history.component.html'
 })
 export default class WorkoutHistoryComponent implements OnInit {
   private fitnessService = inject(FitnessService);

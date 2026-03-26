@@ -46,7 +46,8 @@ export default class WorkoutHistoryComponent implements OnInit {
     this.fitnessService.getFitnessHistory(this.user()!.userId!, from, to)
       .subscribe({
         next: (data) => {
-          this.history.set(data);
+          const filteredData = this.filterDataForRange(data, range);
+          this.history.set(filteredData);
           this.loading.set(false);
         },
         error: (err) => {
@@ -54,6 +55,38 @@ export default class WorkoutHistoryComponent implements OnInit {
           this.loading.set(false);
         }
       });
+  }
+
+  private filterDataForRange(data: FitnessData[], range: DateRange): FitnessData[] {
+    const today = new Date();
+    const cutoffDate = new Date(today);
+
+    switch (range) {
+      case '24h':
+        cutoffDate.setDate(today.getDate() - 1);
+        break;
+      case '7d':
+        cutoffDate.setDate(today.getDate() - 7);
+        break;
+      case '30d':
+        cutoffDate.setDate(today.getDate() - 30);
+        break;
+    }
+
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const cutoffString = `${cutoffDate.getFullYear()}-${pad(cutoffDate.getMonth() + 1)}-${pad(cutoffDate.getDate())}`;
+
+    // We only keep data where the local timestamp representation is >= cutoffString
+    return data.filter(item => {
+      // Create a local Date object from the UTC timestamp
+      // Assuming item.timestamp is a valid ISO string like "2026-03-25T14:00:00.000Z"
+      const localDate = new Date(item.timestamp);
+
+      // We format it to local YYYY-MM-DD
+      const localDateString = `${localDate.getFullYear()}-${pad(localDate.getMonth() + 1)}-${pad(localDate.getDate())}`;
+
+      return localDateString >= cutoffString;
+    });
   }
 
   getAttributesList(attributes: { [key: string]: string }): { key: string; value: string }[] {
@@ -85,18 +118,22 @@ export default class WorkoutHistoryComponent implements OnInit {
   }
 
   private calculateDateRange(range: DateRange): { from: string, to: string } {
-    const toDate = new Date();
-    const fromDate = new Date();
+    const today = new Date();
+
+    const toDate = new Date(today);
+    toDate.setDate(today.getDate() + 1);
+
+    const fromDate = new Date(today);
 
     switch (range) {
       case '24h':
-        fromDate.setDate(toDate.getDate() - 2);
+        fromDate.setDate(today.getDate() - 2);
         break;
       case '7d':
-        fromDate.setDate(toDate.getDate() - 7);
+        fromDate.setDate(today.getDate() - 8);
         break;
       case '30d':
-        fromDate.setDate(toDate.getDate() - 30);
+        fromDate.setDate(today.getDate() - 31);
         break;
     }
 

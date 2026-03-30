@@ -7,6 +7,7 @@ import { TrainerService, Conversation, ChatMessage, LlmResponse } from '../../..
 
 @Component({
     selector: 'app-agentic-chat',
+    standalone: true,
     imports: [CommonModule, ReactiveFormsModule, MarkdownModule],
     templateUrl: './agentic-chat.component.html'
 })

@@ -13,6 +13,7 @@ interface TooltipData {
 
 @Component({
     selector: 'app-workout-history',
+    standalone: true,
     imports: [CommonModule],
     templateUrl: './workout-history.component.html'
 })

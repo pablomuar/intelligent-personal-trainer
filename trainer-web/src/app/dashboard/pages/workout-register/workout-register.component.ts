@@ -7,6 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-workout-register',
+    standalone: true,
     imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './workout-register.component.html'
 })

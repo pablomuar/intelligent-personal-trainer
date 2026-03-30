@@ -121,25 +121,27 @@ export default class WorkoutHistoryComponent implements OnInit {
     const today = new Date();
 
     const toDate = new Date(today);
-    toDate.setDate(today.getDate() + 1);
 
     const fromDate = new Date(today);
 
     switch (range) {
       case '24h':
-        fromDate.setDate(today.getDate() - 2);
+        fromDate.setDate(today.getDate() - 1);
         break;
       case '7d':
-        fromDate.setDate(today.getDate() - 8);
+        fromDate.setDate(today.getDate() - 6);
         break;
       case '30d':
-        fromDate.setDate(today.getDate() - 31);
+        fromDate.setDate(today.getDate() - 29);
         break;
     }
 
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const formatDate = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+
     return {
-      from: fromDate.toISOString().split('T')[0],
-      to: toDate.toISOString().split('T')[0]
+      from: formatDate(fromDate),
+      to: formatDate(toDate)
     };
   }
 }

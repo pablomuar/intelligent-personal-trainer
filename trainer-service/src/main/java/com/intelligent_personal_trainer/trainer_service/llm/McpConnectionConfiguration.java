@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Configuration
@@ -20,6 +21,7 @@ import java.util.List;
 public class McpConnectionConfiguration {
 
     private final LoadBalancerClient loadBalancerClient;
+    private final ConcurrentHashMap<String, ServiceInstance> stickyInstances = new ConcurrentHashMap<>();
 
     @Value("${mcp.connection.customizer.services}")
     private List<String> servicesToCustomize;
@@ -46,7 +48,16 @@ public class McpConnectionConfiguration {
 
     private void changeLoadBalancerURI(HttpRequest.Builder builder, URI endpoint, String serviceName) {
         try {
-            ServiceInstance instance = loadBalancerClient.choose(serviceName);
+            ServiceInstance instance;
+            if (endpoint.getPath() != null && endpoint.getPath().endsWith("sse")) {
+                instance = loadBalancerClient.choose(serviceName);
+                if (instance != null) {
+                    stickyInstances.put(serviceName, instance);
+                }
+            } else {
+                instance = stickyInstances.getOrDefault(serviceName, loadBalancerClient.choose(serviceName));
+            }
+
             if (instance != null) {
                 URI resolvedUri = new URI(
                         instance.getUri().getScheme(),

@@ -72,9 +72,11 @@ services:
     image: ${DOCKER_IMAGE_PREFIX}/user-service:latest
     container_name: user-service
     depends_on:
+      - kafka
       - timescaledb
       - service-discovery
     environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
       - SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT=60000
       - SPRING_DATASOURCE_URL=jdbc:postgresql://timescaledb:5432/intelligent_personal_trainer
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}

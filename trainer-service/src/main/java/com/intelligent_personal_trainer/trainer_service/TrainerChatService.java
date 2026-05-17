@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 
@@ -77,7 +79,7 @@ public class TrainerChatService {
                 .map(c -> ConversationResponse.builder()
                         .id(c.getId())
                         .title(c.getTitle())
-                        .lastMessageAt(c.getUpdatedAt() != null ? c.getUpdatedAt() : c.getCreatedAt())
+                        .lastMessageAt(c.getUpdatedAt() != null ? c.getUpdatedAt().toInstant(ZoneOffset.UTC) : c.getCreatedAt().toInstant(ZoneOffset.UTC))
                         .build())
                 .toList();
     }
@@ -88,7 +90,7 @@ public class TrainerChatService {
                         .id(m.getId())
                         .role(m.getRole())
                         .content(m.getContent())
-                        .createdAt(m.getCreatedAt())
+                        .createdAt(m.getCreatedAt().toInstant(ZoneOffset.UTC))
                         .build())
                 .toList();
     }

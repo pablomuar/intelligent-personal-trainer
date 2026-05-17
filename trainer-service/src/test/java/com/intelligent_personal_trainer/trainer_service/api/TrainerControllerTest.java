@@ -12,7 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -96,7 +96,7 @@ class TrainerControllerTest {
         ConversationResponse response = ConversationResponse.builder()
                 .id(1L)
                 .title("Test Chat")
-                .lastMessageAt(LocalDateTime.now())
+                .lastMessageAt(Instant.now())
                 .build();
 
         when(trainerChatService.getConversations(anyString()))

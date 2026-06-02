@@ -1,15 +1,46 @@
 # API Gateway
 
+![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.0-brightgreen?style=flat-square&logo=spring)
+![Spring Cloud Gateway](https://img.shields.io/badge/Spring_Cloud_Gateway-blue?style=flat-square&logo=spring)
+
 ## Overview
-The API Gateway serves as the single entry point for the Intelligent Personal Trainer microservices architecture. It routes incoming requests from the frontend or external clients to the appropriate backend services.
+
+The `api-gateway` acts as the single entry point for all frontend requests to the Intelligent Personal Trainer backend. It is built on Spring Cloud Gateway, providing a reactive, non-blocking API routing mechanism.
 
 ## Key Features
 
-*   **Service Discovery Integration:** Integrated with **Netflix Eureka** to dynamically discover service locations.
-*   **Centralized Routing:** Powered by **Spring Cloud Gateway**, it routes traffic based on path predicates using load-balanced service IDs (`lb://`):
-    *   `/users/**` -> `lb://user-service`
-    *   `/trainer/**` -> `lb://trainer-service`
-    *   `/data-processor/**` -> `lb://data-processor-service`
-    *   `/data-persistence/**` -> `lb://data-persistence-service`
-*   **CORS Configuration:** Configured to support Cross-Origin Resource Sharing, allowing the frontend application (running on localhost) to communicate securely with backend services.
-*   **Port:** Runs on port `9000` by default.
+*   **Dynamic Routing:** Uses the `lb://` scheme to integrate with Eureka (Service Discovery) and load balance requests to backend microservices automatically without hardcoded URLs.
+*   **CORS Centralization:** Manages Cross-Origin Resource Sharing (CORS) globally, currently configured to allow requests from the local Angular frontend (`http://localhost:4200`).
+*   **OpenAPI Aggregation:** Aggregates Swagger/OpenAPI documentation from all underlying microservices into a single, unified Swagger UI interface accessible at the gateway level.
+
+## Prerequisites
+
+*   Java 21
+*   Maven 3.9+
+*   Service Discovery (Eureka) must be running.
+
+## Running the Service
+
+### Local Development (Maven)
+
+```bash
+mvn spring-boot:run
+```
+
+### Docker Compose
+
+```bash
+cd ..
+docker compose up -d api-gateway
+```
+
+## Endpoints
+
+The Gateway exposes standard routes mapping to the microservices:
+*   `/users/**` -> `user-service`
+*   `/trainer/**` -> `trainer-service`
+*   `/data-persistence/**` -> `data-persistence-service`
+*   `/data-processor/**` -> `data-processor-service`
+
+**Aggregated Swagger UI:** `http://localhost:9000/swagger-ui.html`

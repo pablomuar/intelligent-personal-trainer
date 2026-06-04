@@ -1,19 +1,42 @@
 # Service Discovery
 
+![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.0-brightgreen?style=flat-square&logo=spring)
+![Netflix Eureka](https://img.shields.io/badge/Netflix_Eureka-blue?style=flat-square&logo=netflix)
+
 ## Overview
-The Service Discovery module is a critical component of the microservices architecture, acting as the central registry for all backend services. It is built using **Netflix Eureka Server**.
+
+The `service-discovery` module is an essential infrastructure component based on Netflix Eureka Server. It acts as a registry where all other microservices announce their presence and network locations upon startup.
 
 ## Key Features
 
-*   **Service Registry:** allows services to register themselves dynamically at startup.
-*   **Health Monitoring:** continuously checks the health of registered services.
-*   **Load Balancing:** enables the API Gateway and other services to locate instances of backend services for load balancing and failover.
+*   **Dynamic Registration:** Allows microservices to dynamically register their IP addresses and ports, eliminating the need for hardcoded configurations in the API Gateway or Feign clients.
+*   **Client-Side Load Balancing:** Enables components like the Spring Cloud Gateway to discover available instances of a service and distribute traffic among them.
 
-## Configuration
+## Prerequisites
 
-*   **Port:** Runs on port `8761` by default.
-*   **Dashboard:** Provides a web dashboard at `http://localhost:8761` to view registered instances.
+*   Java 21
+*   Maven 3.9+
 
-## Integration
+## Running the Service
 
-All other microservices (`user-service`, `trainer-service`, `data-persistence-service`, `data-processor-service`, `api-gateway`) are configured as Eureka Clients and will automatically register with this server upon startup.
+This is typically the first service that should be started.
+
+### Local Development (Maven)
+
+```bash
+mvn spring-boot:run
+```
+
+### Docker Compose
+
+```bash
+cd ..
+docker compose up -d service-discovery
+```
+
+## Accessing the Registry
+
+The Eureka Server dashboard can be accessed to view currently registered microservices:
+
+*   **URL:** `http://localhost:8761`

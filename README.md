@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.0-brightgreen?style=flat-square&logo=spring)
-![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-2023.0.2-blue?style=flat-square&logo=spring)
+![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-2025-blue?style=flat-square&logo=spring)
 ![Angular](https://img.shields.io/badge/Angular-18.1.0-red?style=flat-square&logo=angular)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=flat-square&logo=postgresql)
 ![TimescaleDB](https://img.shields.io/badge/TimescaleDB-latest-yellow?style=flat-square&logo=timescaledb)

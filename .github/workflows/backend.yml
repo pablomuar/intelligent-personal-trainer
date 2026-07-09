@@ -65,8 +65,22 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and Push Images
+      - name: Build Local Docker Images with Jib
+        run: mvn clean install jib:dockerBuild -DskipTests
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker Images
         run: |
-          mvn clean install jib:build -DskipTests \
-            -Djib.to.auth.username=${{ github.actor }} \
-            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+          # Push all generated microservice images
+          SERVICES=("data-processor-service" "data-persistence-service" "trainer-service" "user-service" "api-gateway" "service-discovery")
+
+          for SERVICE in "${SERVICES[@]}"; do
+            echo "Pushing ghcr.io/${{ github.actor }}/$SERVICE:latest"
+            docker push ghcr.io/${{ github.actor }}/$SERVICE:latest
+          done

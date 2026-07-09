@@ -65,9 +65,21 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and Push Images
+      - name: Build Images locally
+        run: mvn clean install jib:dockerBuild -DskipTests
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Images to GHCR
         run: |
-          mvn clean install jib:build -DskipTests \
-            -Djib.to.auth.username=${{ github.actor }} \
-            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }} \
-            -Djib.serialize=true
+          docker push ghcr.io/pablomuar/data-processor-service:latest
+          docker push ghcr.io/pablomuar/data-persistence-service:latest
+          docker push ghcr.io/pablomuar/trainer-service:latest
+          docker push ghcr.io/pablomuar/user-service:latest
+          docker push ghcr.io/pablomuar/api-gateway:latest
+          docker push ghcr.io/pablomuar/service-discovery:latest

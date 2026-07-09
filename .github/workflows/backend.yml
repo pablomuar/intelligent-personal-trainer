@@ -69,4 +69,5 @@ jobs:
         run: |
           mvn clean install jib:build -DskipTests \
             -Djib.to.auth.username=${{ github.actor }} \
-            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }} \
+            -Djib.serialize=true
